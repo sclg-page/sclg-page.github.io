@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scene Language: Representing Scenes with Programs, Words, and Embeddings</title>
+
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <!-- <script src="./static/js/index.js"></script> -->
+
+  <style>
+    /* text-3d, i.e. 2 columns container */
+    .text-3d-container {
+            position: relative;
+            width: 800px;
+            margin: 20px auto;
+        }
+
+    .text-3d-container img {
+        top: -10px;
+        width: 100%;
+        height: auto;
+    }
+
+    /* .text-3d-text-left {
+        position: absolute;
+        top: 90%;
+        left: 200px;
+        transform: translateX(-50%);
+    }
+
+    .text-3d-text-right {
+        position: absolute;
+        top: 90%;
+        left: 600px;
+        transform: translateX(-50%);
+    } */
+
+    .text-3d-text-center {
+        position: absolute;
+        top: 20px;
+        left: 400px;
+        transform: translateX(-50%);
+        font-size: 18px;
+        font-weight: bold;
+        font-style: italic;
+    }
+
+    .text-3d-container .bottom-text {
+        position: relative;
+        width: 800px;
+        margin: 0 auto;
+        margin-bottom: 100px;
+    }
+
+    .text-3d-container .bottom-text .text-left {
+        position: absolute;
+        left: 200px;
+        transform: translateX(-50%);
+    }
+
+    .text-3d-container .bottom-text .text-right {
+        position: absolute;
+        left: 600px;
+        transform: translateX(-50%);
+    }
+
+    /* user-study, i.e. 3 columns container */
+    .userstudy-container {
+        width: 900px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .userstudy-container .text-center {
+        font-size: 18px;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+        font-style: italic;
+    }
+
+    .userstudy-container img {
+        width: 900px;
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 20px;
+    }
+
+    .userstudy-container .bottom-text-container {
+        position: relative;
+        width: 900px;
+        margin: 0 auto;
+        margin-bottom: 100px;
+    }
+
+    .userstudy-container .bottom-text-container .text-1 {
+        position: absolute;
+        left: 150px;
+        transform: translateX(-50%);
+    }
+
+    .userstudy-container .bottom-text-container .text-2 {
+        position: absolute;
+        left: 450px;
+        transform: translateX(-50%);
+    }
+
+    .userstudy-container .bottom-text-container .text-3 {
+        position: absolute;
+        left: 750px;
+        transform: translateX(-50%);
+    }
+
+    /* 4d */
+
+    #image-text-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .image-text-block {
+        text-align: center;
+        flex: 1;
+        margin: 0 10px;
+    }
+
+    .image-text-block img {
+        width: 100%;
+        max-width: 250px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .image-text-block p {
+        margin-bottom: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        font-style: italic;
+    }
+
+    p {
+        margin: 0;
+    }
+</style>
+
+</head>
+
+<body>
+
+    <section class="hero">
+        <div class="hero-body">
+          <div class="container is-max-desktop">
+            
+            <br>
+      
+            <div class="columns is-centered">
+              <div class="column has-text-centered">
+                <h1 class="title is-3 publication-title" style="font-size: 2.2rem;">Scene Language: Representing Scenes with Programs, Words, and Embeddings</h1>
+                <div class="is-size-5 publication-authors">
+                  <span class="author-block">
+                    Anonymous Submission 809
+                  </span>
+                </div>
+      
+                <div class="is-size-5 publication-authors">
+                  <span class="author-block">ICLR 2025</span>
+                </div>
+      
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered">
+                <div class="column is-full-width has-text-centered">
+                    <h2 class="title is-4">Text-conditioned Scene Generation Results Used in the User Study</h2>
+
+                    <div class="content has-text-justified">
+                        <p>
+                          We show the comparisons of 3D generation results between <b>MVDream (left)</b>, 
+                          <b>Graphdreamer (middle)</b> and <b>ours (right)</b>, with the same text prompt shown 
+                          on top of each result. Our method achieves more favorable prompt alignment 
+                          than the baselines and has a clear advantage in counting accuracy.
+                        </p>
+                      </div>
+                    
+                      <div class="content has-text-centered">
+
+                        <div class="userstudy-container">
+                            <div class="text-center">15 coke cans stacking in a pyramid</div>
+                            <img src='resources/user_study/0000.gif'>
+                            <div class="bottom-text-container">
+                                <div class="text-1">MVDream</div>
+                                <div class="text-2">Graphdreamer</div>
+                                <div class="text-3">Ours</div>
+                            </div>
+                        </div>
+
+                        <div class="userstudy-container">
+                            <div class="text-center">A 5x5 grid of white and black chess pieces on a square board</div>
+                            <img src='resources/user_study/0001.gif'>
+                            <div class="bottom-text-container">
+                                <div class="text-1">MVDream</div>
+                                <div class="text-2">Graphdreamer</div>
+                                <div class="text-3">Ours</div>
+                            </div>
+                        </div>
+
+                        <div class="userstudy-container">
+                            <div class="text-center">A nursery with 7x7 of potted plants</div>
+                            <img src='resources/user_study/0002.gif'>
+                            <div class="bottom-text-container">
+                                <div class="text-1">MVDream</div>
+                                <div class="text-2">Graphdreamer</div>
+                                <div class="text-3">Ours</div>
+                            </div>
+                        </div>
+
+                        <div class="userstudy-container">
+                            <div class="text-center">A room with four desks, each with one computer monitor on it</div>
+                            <img src='resources/user_study/0003.gif'>
+                            <div class="bottom-text-container">
+                                <div class="text-1">MVDream</div>
+                                <div class="text-2">Graphdreamer</div>
+                                <div class="text-3">Ours</div>
+                            </div>
+                        </div>
+
+                        <div class="userstudy-container">
+                            <div class="text-center">6 bottles of water arranged in a circle around a small potted plant</div>
+                            <img src='resources/user_study/0004.gif'>
+                            <div class="bottom-text-container">
+                                <div class="text-1">MVDream</div>
+                                <div class="text-2">Graphdreamer</div>
+                                <div class="text-3">Ours</div>
+                            </div>
+                        </div>
+
+                        <div class="userstudy-container">
+                            <div class="text-center">A 8-layer 3-color Jenga set at game start</div>
+                            <img src='resources/user_study/0005.gif'>
+                            <div class="bottom-text-container">
+                                <div class="text-1">MVDream</div>
+                                <div class="text-2">Graphdreamer</div>
+                                <div class="text-3">Ours</div>
+                            </div>
+                        </div>
+
+                        <div class="userstudy-container">
+                            <div class="text-center">7 different sized Russian nesting dolls lined up</div>
+                            <img src='resources/user_study/0006.gif'>
+                            <div class="bottom-text-container">
+                                <div class="text-1">MVDream</div>
+                                <div class="text-2">Graphdreamer</div>
+                                <div class="text-3">Ours</div>
+                            </div>
+                        </div>
+
+                        <div class="userstudy-container">
+                            <div class="text-center">A 8-layer shelf</div>
+                            <img src='resources/user_study/0007.gif'>
+                            <div class="bottom-text-container">
+                                <div class="text-1">MVDream</div>
+                                <div class="text-2">Graphdreamer</div>
+                                <div class="text-3">Ours</div>
+                            </div>
+                        </div>
+
+                        <div class="userstudy-container">
+                            <div class="text-center">Three cokes in a close circle</div>
+                            <img src='resources/user_study/0008.gif'>
+                            <div class="bottom-text-container">
+                                <div class="text-1">MVDream</div>
+                                <div class="text-2">Graphdreamer</div>
+                                <div class="text-3">Ours</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 class="title is-4">Additional Text-conditioned 3D Generation Results</h2>
+
+                    <div class="content has-text-justified">
+                        <p>
+                          Here we show more text-conditioned 3D generation results based on proposed Scene Language,
+                          with text prompt on top of each result. We show the results using <b>primitive-based renderer (left)</b> 
+                          and <b>SDS-based renderer (right)</b>.
+                        </p>
+                    </div>
+
+                    <div class="content has-text-centered">
+                        
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">A full-length piano keyboard</p>
+                            <img src="resources/text-to-3d/0000piano_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">The Goldfish by Henri Matisse</p>
+                            <img src="resources/text-to-3d/0001Goldfish_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">A monitor, a keyboard, a mouse, a metal photo frame, and a plant on a wooden desk top</p>
+                            <img src="resources/text-to-3d/0002desktop_setup_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">Bramante Staircase, Vatican Museums</p>
+                            <img src="resources/text-to-3d/0003staircase_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">A fractal tree</p>
+                            <img src="resources/text-to-3d/0004fractal_tree_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">Rene Magritte The Son of Man</p>
+                            <img src="resources/text-to-3d/0005Son_of_Man_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">A chessboard at game start</p>
+                            <img src="resources/text-to-3d/0006chessboard_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">A bookshelf</p>
+                            <img src="resources/text-to-3d/0007bookshelf_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">City skyline at sunset</p>
+                            <img src="resources/text-to-3d/0008city_skyline_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">Lincoln Memorial</p>
+                            <img src="resources/text-to-3d/0009Lincoln_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">A still life painting from Paul Cezanne</p>
+                            <img src="resources/text-to-3d/0010Cezane_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">Paul Klee Castle and Sun</p>
+                            <img src="resources/text-to-3d/0011castle_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+                        
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">A scene of Moai in Ahu Akivi, with slight variations</p>
+                            <img src="resources/text-to-3d/0012Monai_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">A still life painting from Giorgio Morandi</p>
+                            <img src="resources/text-to-3d/0013Morandi_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">A plant on a small coffee table</p>
+                            <img src="resources/text-to-3d/0014plant_on_table_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+
+                        <div class="text-3d-container">
+                            <p class="text-3d-text-center">A scene inspired by The Angelus, Millet</p>
+                            <img src="resources/text-to-3d/0015Angulus_.gif" alt="Sample Image">
+                            <div class="bottom-text">
+                                <div class="text-left">Primitive-based</div>
+                                <div class="text-right">SDS-based</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br><br><br>
+
+                    <h2 class="title is-4">Image-conditioned 3D Generation Results</h2>
+
+                    <div class="content has-text-justified">
+                        <p>
+                          Here we show image-conditioned 3D generation results based on proposed Scene Language,
+                          including <b>original image condition (left)</b>, <b>primitive-based renderer (middle) results</b> 
+                          and <b>SDS-based renderer (right) results</b>.
+                        </p>
+                    </div>
+
+                    <div class="userstudy-container">
+                        <img src='resources/img-to-3d/cokes.gif'>
+                        <div class="bottom-text-container">
+                            <div class="text-1">Image condition</div>
+                            <div class="text-2">Primitive-based</div>
+                            <div class="text-3">SDS-based</div>
+                        </div>
+                    </div>
+
+                    <div class="userstudy-container">
+                        <img src='resources/img-to-3d/vases.gif'>
+                        <div class="bottom-text-container">
+                            <div class="text-1">Image condition</div>
+                            <div class="text-2">Primitive-based</div>
+                            <div class="text-3">SDS-based</div>
+                        </div>
+                    </div>
+
+                    <div class="userstudy-container">
+                        <img src='resources/img-to-3d/wayne.gif'>
+                        <div class="bottom-text-container">
+                            <div class="text-1">Image condition</div>
+                            <div class="text-2">Primitive-based</div>
+                            <div class="text-3">SDS-based</div>
+                        </div>
+                    </div>
+
+                    <h2 class="title is-4">Text-conditioned 4D Scene Generation Results</h2>
+
+                    <div class="content has-text-justified">
+                        <p>
+                          We show the results of proposed Scene Language applied for synthesizing 4D scenes, 
+                          including text prompt for the scene and the generated 4D scene.
+                        </p>
+                    </div>
+
+                    <div id="image-text-container">
+                        <div class="image-text-block">
+                          <p>Carousel with a small canopy</p>
+                          <img src="resources/4d/carousel.gif" alt="Image 1">
+                        </div>
+                        
+                        <!-- Second image-text block -->
+                        <div class="image-text-block">
+                          <p>Solar system model</p>
+                          <img src="resources/4d/solar.gif" alt="Image 2">
+                        </div>
+                        
+                        <!-- Third image-text block -->
+                        <div class="image-text-block">
+                          <p>A toy wind turbine</p>
+                          <img src="resources/4d/wind.gif" alt="Image 3">
+                        </div>
+                      </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+      <footer class="footer">
+        <div class="container">
+          <div class="columns is-centered">
+            <div class="column is-8">
+              <div class="content">
+                <p>
+                  This webpage template is adapted from <a
+                  href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>, under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0 License</a>.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+</body>
+</html>
