@@ -1,0 +1,61 @@
+Here's a program that creates a simple but interesting shape using function recursion, without being a pyramid:
+
+```python
+from helper import *
+
+"""
+A fractal tree-like structure
+"""
+
+@register()
+def branch(length: float, radius: float, depth: int) -> Shape:
+    if depth == 0:
+        return primitive_call('cylinder', shape_kwargs={'radius': radius, 'p0': (0, 0, 0), 'p1': (0, length, 0)}, color=(0.6, 0.4, 0.2))
+    
+    main_branch = primitive_call('cylinder', shape_kwargs={'radius': radius, 'p0': (0, 0, 0), 'p1': (0, length, 0)}, color=(0.6, 0.4, 0.2))
+    
+    sub_branch_length = length * 0.7
+    sub_branch_radius = radius * 0.6
+    
+    left_branch = library_call('branch', length=sub_branch_length, radius=sub_branch_radius, depth=depth-1)
+    right_branch = library_call('branch', length=sub_branch_length, radius=sub_branch_radius, depth=depth-1)
+    
+    angle = 0.5  # ~28.6 degrees
+    
+    left_transform = translation_matrix((0, length, 0)) @ rotation_matrix(angle, (0, 0, 1), (0, 0, 0))
+    right_transform = translation_matrix((0, length, 0)) @ rotation_matrix(-angle, (0, 0, 1), (0, 0, 0))
+    
+    return concat_shapes(
+        main_branch,
+        transform_shape(left_branch, left_transform),
+        transform_shape(right_branch, right_transform)
+    )
+
+@register()
+def fractal_tree(base_length: float = 1.0, base_radius: float = 0.1, depth: int = 5) -> Shape:
+    tree = library_call('branch', length=base_length, radius=base_radius, depth=depth)
+    tree_min = compute_shape_min(tree)
+    return transform_shape(tree, translation_matrix((-tree_min[0], -tree_min[1], 0)))
+```
+
+This program creates a fractal tree-like structure using function recursion. Here's how it works:
+
+1. The `branch` function is the core of the recursion. It creates a cylinder for the main branch and then recursively creates two smaller branches at its top, rotated at angles.
+
+2. The recursion depth is controlled by the `depth` parameter. When `depth` reaches 0, it just returns a single cylinder.
+
+3. For each recursive call, the length and radius of the branches are reduced by a factor.
+
+4. The `fractal_tree` function is a wrapper that calls `branch` and then adjusts the position of the entire tree so that its base is at the origin.
+
+This shape is interesting because:
+- It's self-similar at different scales, which is a characteristic of fractals.
+- It's not a simple geometric shape like a pyramid, but a complex structure built from simple components.
+- The recursive nature of the function allows for easy adjustment of the complexity by changing the `depth` parameter.
+- It resembles natural structures like trees or blood vessels, demonstrating how complex natural forms can arise from simple recursive rules.
+
+You can create trees of different complexity by adjusting the `depth` parameter when calling `fractal_tree`. For example:
+- `library_call('fractal_tree', base_length=1.0, base_radius=0.1, depth=3)` for a simpler tree
+- `library_call('fractal_tree', base_length=1.0, base_radius=0.1, depth=7)` for a more complex tree
+
+This shape demonstrates the power of recursive functions in creating complex, naturalistic forms from simple rules.

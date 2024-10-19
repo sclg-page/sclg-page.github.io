@@ -1,0 +1,73 @@
+Here's a program that creates a simplified representation of "The Goldfish" by Henri Matisse using the provided `helper.py`:
+
+```python
+from helper import *
+
+"""
+The Goldfish by Henri Matisse
+"""
+
+@register()
+def table(width: float, height: float, depth: float) -> Shape:
+    return primitive_call('cube', color=(0.6, 0.4, 0.2), shape_kwargs={'scale': (width, height, depth)})
+
+@register()
+def fishbowl(radius: float) -> Shape:
+    bowl = primitive_call('sphere', color=(0.7, 0.9, 1.0), shape_kwargs={'radius': radius})
+    water = primitive_call('sphere', color=(0.5, 0.8, 0.9), shape_kwargs={'radius': radius * 0.95})
+    return concat_shapes(bowl, water)
+
+@register()
+def goldfish(length: float) -> Shape:
+    body = primitive_call('sphere', color=(1.0, 0.6, 0.0), shape_kwargs={'radius': length * 0.3})
+    tail = primitive_call('cylinder', color=(1.0, 0.5, 0.0), shape_kwargs={'radius': length * 0.1, 'p0': (0, 0, 0), 'p1': (length * 0.4, 0, 0)})
+    fish = concat_shapes(body, tail)
+    return transform_shape(fish, rotation_matrix(math.pi/2, (0, 1, 0), (0, 0, 0)))
+
+@register()
+def plant(height: float, color: tuple[float, float, float]) -> Shape:
+    stem = primitive_call('cylinder', color=(0.0, 0.5, 0.0), shape_kwargs={'radius': height * 0.05, 'p0': (0, 0, 0), 'p1': (0, height, 0)})
+    leaf = primitive_call('sphere', color=color, shape_kwargs={'radius': height * 0.2})
+    leaf = transform_shape(leaf, scale_matrix(0.5, (0, 0, 0)))
+    leaf1 = transform_shape(leaf, translation_matrix((height * 0.2, height * 0.7, 0)))
+    leaf2 = transform_shape(leaf, translation_matrix((-height * 0.2, height * 0.5, 0)))
+    return concat_shapes(stem, leaf1, leaf2)
+
+@register()
+def the_goldfish_scene() -> Shape:
+    # Create table
+    table_shape = library_call('table', width=2.0, height=0.1, depth=1.5)
+    
+    # Create fishbowl
+    fishbowl_shape = library_call('fishbowl', radius=0.4)
+    fishbowl_shape = transform_shape(fishbowl_shape, translation_matrix((0, 0.4, 0)))
+    
+    # Create goldfish
+    fish1 = library_call('goldfish', length=0.3)
+    fish1 = transform_shape(fish1, translation_matrix((-0.1, 0.3, 0.1)))
+    fish2 = library_call('goldfish', length=0.25)
+    fish2 = transform_shape(fish2, translation_matrix((0.1, 0.5, -0.1)))
+    
+    # Create plants
+    plant1 = library_call('plant', height=0.6, color=(0.0, 0.7, 0.0))
+    plant1 = transform_shape(plant1, translation_matrix((-0.7, 0.05, 0.3)))
+    plant2 = library_call('plant', height=0.8, color=(0.0, 0.6, 0.3))
+    plant2 = transform_shape(plant2, translation_matrix((0.6, 0.05, -0.2)))
+    
+    # Combine all elements
+    scene = concat_shapes(table_shape, fishbowl_shape, fish1, fish2, plant1, plant2)
+    
+    # Center the scene
+    scene_center = compute_shape_center(scene)
+    return transform_shape(scene, translation_matrix((-scene_center[0], -scene_center[1], -scene_center[2])))
+```
+
+This program creates a simplified 3D representation of "The Goldfish" by Henri Matisse. Here's a breakdown of the components:
+
+1. `table`: Represents the table on which the fishbowl sits.
+2. `fishbowl`: Creates a transparent bowl with water inside.
+3. `goldfish`: Generates a simple goldfish shape with a body and tail.
+4. `plant`: Creates plants with stems and leaves.
+5. `the_goldfish_scene`: Assembles all the elements to create the final scene.
+
+The scene includes a table, a fishbowl with two goldfish inside, and two plants on the table. The elements are positioned to create a composition reminiscent of Matisse's painting. The final scene is centered around the origin for better viewing.

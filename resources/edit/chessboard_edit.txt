@@ -1,0 +1,128 @@
+Here's a minimally edited version of the program that makes a starting chess move:
+
+```python
+from helper import *
+
+"""
+Make a starting chess move
+"""
+
+@register("chess_square")
+def chess_square(color: tuple[float, float, float]) -> Shape:
+    return primitive_call('cube', color=color, shape_kwargs={'scale': (0.125, 0.02, 0.125)})
+
+@register("chessboard")
+def chessboard() -> Shape:
+    def loop_fn(i) -> Shape:
+        row = i // 8
+        col = i % 8
+        color = (0.9, 0.9, 0.9) if (row + col) % 2 == 0 else (0.1, 0.1, 0.1)
+        square = library_call('chess_square', color=color)
+        return transform_shape(square, translation_matrix((col * 0.125, 0, row * 0.125)))
+
+    return loop(64, loop_fn)
+
+@register("chess_pawn")
+def chess_pawn(color: tuple[float, float, float]) -> Shape:
+    base = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.05, 'p0': (0, 0, 0), 'p1': (0, 0.02, 0)})
+    body = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.04, 'p0': (0, 0.02, 0), 'p1': (0, 0.08, 0)})
+    head = primitive_call('sphere', color=color, shape_kwargs={'radius': 0.035})
+    head = transform_shape(head, translation_matrix((0, 0.115, 0)))
+    return concat_shapes(base, body, head)
+
+@register("chess_rook")
+def chess_rook(color: tuple[float, float, float]) -> Shape:
+    base = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.05, 'p0': (0, 0, 0), 'p1': (0, 0.02, 0)})
+    body = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.04, 'p0': (0, 0.02, 0), 'p1': (0, 0.1, 0)})
+    top = primitive_call('cube', color=color, shape_kwargs={'scale': (0.09, 0.03, 0.09)})
+    top = transform_shape(top, translation_matrix((0, 0.115, 0)))
+    return concat_shapes(base, body, top)
+
+@register("chess_knight")
+def chess_knight(color: tuple[float, float, float]) -> Shape:
+    base = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.05, 'p0': (0, 0, 0), 'p1': (0, 0.02, 0)})
+    body = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.04, 'p0': (0, 0.02, 0), 'p1': (0, 0.08, 0)})
+    head = primitive_call('cube', color=color, shape_kwargs={'scale': (0.06, 0.08, 0.04)})
+    head = transform_shape(head, translation_matrix((0.01, 0.11, 0)))
+    head = transform_shape(head, rotation_matrix(0.3, (0, 0, 1), (0, 0.11, 0)))
+    return concat_shapes(base, body, head)
+
+@register("chess_bishop")
+def chess_bishop(color: tuple[float, float, float]) -> Shape:
+    base = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.05, 'p0': (0, 0, 0), 'p1': (0, 0.02, 0)})
+    body = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.04, 'p0': (0, 0.02, 0), 'p1': (0, 0.1, 0)})
+    head = primitive_call('sphere', color=color, shape_kwargs={'radius': 0.03})
+    head = transform_shape(head, translation_matrix((0, 0.13, 0)))
+    top = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.01, 'p0': (0, 0.13, 0), 'p1': (0, 0.16, 0)})
+    return concat_shapes(base, body, head, top)
+
+@register("chess_queen")
+def chess_queen(color: tuple[float, float, float]) -> Shape:
+    base = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.055, 'p0': (0, 0, 0), 'p1': (0, 0.02, 0)})
+    body = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.045, 'p0': (0, 0.02, 0), 'p1': (0, 0.12, 0)})
+    crown = primitive_call('sphere', color=color, shape_kwargs={'radius': 0.04})
+    crown = transform_shape(crown, translation_matrix((0, 0.16, 0)))
+    top = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.01, 'p0': (0, 0.16, 0), 'p1': (0, 0.2, 0)})
+    return concat_shapes(base, body, crown, top)
+
+@register("chess_king")
+def chess_king(color: tuple[float, float, float]) -> Shape:
+    base = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.06, 'p0': (0, 0, 0), 'p1': (0, 0.02, 0)})
+    body = primitive_call('cylinder', color=color, shape_kwargs={'radius': 0.05, 'p0': (0, 0.02, 0), 'p1': (0, 0.14, 0)})
+    crown = primitive_call('cube', color=color, shape_kwargs={'scale': (0.1, 0.03, 0.1)})
+    crown = transform_shape(crown, translation_matrix((0, 0.17, 0)))
+    cross_v = primitive_call('cube', color=color, shape_kwargs={'scale': (0.02, 0.06, 0.02)})
+    cross_v = transform_shape(cross_v, translation_matrix((0, 0.215, 0)))
+    cross_h = primitive_call('cube', color=color, shape_kwargs={'scale': (0.06, 0.02, 0.02)})
+    cross_h = transform_shape(cross_h, translation_matrix((0, 0.215, 0)))
+    return concat_shapes(base, body, crown, cross_v, cross_h)
+
+@register("chess_pieces")
+def chess_pieces() -> Shape:
+    white = (0.9, 0.9, 0.9)
+    black = (0.1, 0.1, 0.1)
+    pieces = []
+
+    # Place pawns
+    for i in range(8):
+        white_pawn = library_call('chess_pawn', color=white)
+        black_pawn = library_call('chess_pawn', color=black)
+        # Move the white pawn at index 4 (e2) two squares forward
+        if i == 4:
+            pieces.append(transform_shape(white_pawn, translation_matrix((i * 0.125, 0.02, 0.375))))
+        else:
+            pieces.append(transform_shape(white_pawn, translation_matrix((i * 0.125, 0.02, 0.125))))
+        pieces.append(transform_shape(black_pawn, translation_matrix((i * 0.125, 0.02, 0.75))))
+
+    # Place other pieces
+    piece_order = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook']
+    for i, piece in enumerate(piece_order):
+        white_piece = library_call(f'chess_{piece}', color=white)
+        black_piece = library_call(f'chess_{piece}', color=black)
+        pieces.append(transform_shape(white_piece, translation_matrix((i * 0.125, 0.02, 0))))
+        pieces.append(transform_shape(black_piece, translation_matrix((i * 0.125, 0.02, 0.875))))
+
+    return concat_shapes(*pieces)
+
+@register("chessboard_with_starting_move")
+def chessboard_with_starting_move() -> Shape:
+    board = library_call('chessboard')
+    pieces = library_call('chess_pieces')
+    return concat_shapes(board, pieces)
+```
+
+In this edited version, I've made the following changes:
+
+1. Renamed the main function from `chessboard_at_game_start` to `chessboard_with_starting_move` to reflect the new state of the board.
+
+2. In the `chess_pieces` function, I've modified the placement of the white pawns. Specifically, the pawn at index 4 (which corresponds to the e2 square in chess notation) is now placed two squares forward (at e4). This represents the common opening move "e4" in chess.
+
+3. The rest of the code remains the same, ensuring that all other pieces are in their starting positions.
+
+To use this program and generate the chessboard with the starting move, you would call:
+
+```python
+chessboard_scene = library_call('chessboard_with_starting_move')
+```
+
+This will return a chessboard with all pieces in their starting positions, except for the white pawn that has moved from e2 to e4, representing a common opening move in chess.

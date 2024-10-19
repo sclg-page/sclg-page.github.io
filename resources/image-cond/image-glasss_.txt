@@ -1,0 +1,105 @@
+Here's a Python program to reconstruct the input scene using the provided `helper.py`:
+
+```python
+from helper import *
+
+"""
+Reconstruct the input scene of four dessert glasses
+"""
+
+@register()
+def glass_stem(height: float, radius: float, color: tuple[float, float, float]) -> Shape:
+    stem = primitive_call('cylinder', shape_kwargs={'radius': radius, 'p0': (0, 0, 0), 'p1': (0, height, 0)}, color=color)
+    base = primitive_call('cylinder', shape_kwargs={'radius': radius * 2, 'p0': (0, 0, 0), 'p1': (0, height * 0.1, 0)}, color=color)
+    return concat_shapes(stem, base)
+
+@register()
+def glass_bowl(radius: float, height: float, color: tuple[float, float, float]) -> Shape:
+    bowl = primitive_call('sphere', shape_kwargs={'radius': radius}, color=color)
+    return transform_shape(bowl, scale_matrix(1.0, (0, 0, 0)) @ translation_matrix((0, height, 0)))
+
+@register()
+def dessert_glass(stem_height: float, stem_radius: float, bowl_radius: float, color: tuple[float, float, float]) -> Shape:
+    stem = library_call('glass_stem', height=stem_height, radius=stem_radius, color=color)
+    bowl = library_call('glass_bowl', radius=bowl_radius, height=stem_height, color=color)
+    return concat_shapes(stem, bowl)
+
+@register()
+def chocolate_sundae() -> Shape:
+    glass = library_call('dessert_glass', stem_height=0.6, stem_radius=0.05, bowl_radius=0.2, color=(0.9, 0.9, 0.9))
+    ice_cream = primitive_call('sphere', shape_kwargs={'radius': 0.15}, color=(0.8, 0.6, 0.4))
+    ice_cream = transform_shape(ice_cream, translation_matrix((0, 0.8, 0)))
+    chocolate_sauce = primitive_call('cylinder', shape_kwargs={'radius': 0.12, 'p0': (0, 0.7, 0), 'p1': (0, 0.85, 0)}, color=(0.3, 0.2, 0.1))
+    cherry = primitive_call('sphere', shape_kwargs={'radius': 0.03}, color=(0.8, 0.1, 0.1))
+    cherry = transform_shape(cherry, translation_matrix((0, 1.0, 0)))
+    return concat_shapes(glass, ice_cream, chocolate_sauce, cherry)
+
+@register()
+def mint_dessert() -> Shape:
+    glass = library_call('dessert_glass', stem_height=0.7, stem_radius=0.04, bowl_radius=0.15, color=(0.9, 0.9, 0.9))
+    mint_cream = primitive_call('cylinder', shape_kwargs={'radius': 0.14, 'p0': (0, 0.7, 0), 'p1': (0, 0.9, 0)}, color=(0.8, 1.0, 0.8))
+    whipped_cream = primitive_call('sphere', shape_kwargs={'radius': 0.1}, color=(1.0, 0.98, 0.98))
+    whipped_cream = transform_shape(whipped_cream, translation_matrix((0, 1.0, 0)))
+    cherry = primitive_call('sphere', shape_kwargs={'radius': 0.03}, color=(0.8, 0.1, 0.1))
+    cherry = transform_shape(cherry, translation_matrix((0, 1.15, 0)))
+    return concat_shapes(glass, mint_cream, whipped_cream, cherry)
+
+@register()
+def orange_parfait() -> Shape:
+    glass = library_call('dessert_glass', stem_height=0.65, stem_radius=0.04, bowl_radius=0.18, color=(0.9, 0.9, 0.9))
+    
+    def layer(height: float, color: tuple[float, float, float]) -> Shape:
+        return primitive_call('cylinder', shape_kwargs={'radius': 0.16, 'p0': (0, height, 0), 'p1': (0, height + 0.1, 0)}, color=color)
+    
+    cream = layer(0.65, (1.0, 0.98, 0.9))
+    orange = layer(0.75, (1.0, 0.7, 0.2))
+    top_cream = layer(0.85, (1.0, 0.98, 0.9))
+    
+    cherry = primitive_call('sphere', shape_kwargs={'radius': 0.03}, color=(0.8, 0.1, 0.1))
+    cherry = transform_shape(cherry, translation_matrix((0, 1.0, 0)))
+    
+    return concat_shapes(glass, cream, orange, top_cream, cherry)
+
+@register()
+def ice_cream_bowl() -> Shape:
+    bowl = primitive_call('sphere', shape_kwargs={'radius': 0.25}, color=(0.9, 0.7, 0.5))
+    bowl = transform_shape(bowl, scale_matrix(0.7, (0, 0, 0)) @ translation_matrix((0, 0.15, 0)))
+    
+    ice_cream = primitive_call('sphere', shape_kwargs={'radius': 0.2}, color=(1.0, 0.98, 0.98))
+    ice_cream = transform_shape(ice_cream, translation_matrix((0, 0.3, 0)))
+    
+    cherry = primitive_call('sphere', shape_kwargs={'radius': 0.03}, color=(0.8, 0.1, 0.1))
+    cherry = transform_shape(cherry, translation_matrix((0, 0.55, 0)))
+    
+    stem = primitive_call('cylinder', shape_kwargs={'radius': 0.05, 'p0': (0, 0, 0), 'p1': (0, 0.1, 0)}, color=(0.9, 0.7, 0.5))
+    base = primitive_call('cylinder', shape_kwargs={'radius': 0.1, 'p0': (0, 0, 0), 'p1': (0, 0.02, 0)}, color=(0.9, 0.7, 0.5))
+    
+    return concat_shapes(bowl, ice_cream, cherry, stem, base)
+
+@register()
+def dessert_scene() -> Shape:
+    sundae = transform_shape(library_call('chocolate_sundae'), translation_matrix((-0.6, 0, 0)))
+    mint = transform_shape(library_call('mint_dessert'), translation_matrix((-0.2, 0, 0)))
+    parfait = transform_shape(library_call('orange_parfait'), translation_matrix((0.2, 0, 0)))
+    bowl = transform_shape(library_call('ice_cream_bowl'), translation_matrix((0.6, 0, 0)))
+    
+    return concat_shapes(sundae, mint, parfait, bowl)
+```
+
+This program reconstructs the input scene of four dessert glasses. Here's a breakdown of the functions:
+
+1. `glass_stem` and `glass_bowl`: These are helper functions to create the stem and bowl parts of a glass.
+
+2. `dessert_glass`: Creates a complete dessert glass by combining the stem and bowl.
+
+3. `chocolate_sundae`: Creates the leftmost glass with chocolate ice cream and sauce.
+
+4. `mint_dessert`: Creates the second glass with mint-colored cream and whipped cream.
+
+5. `orange_parfait`: Creates the third glass with layered orange and cream colors.
+
+6. `ice_cream_bowl`: Creates the rightmost bowl with ice cream.
+
+7. `dessert_scene`: Combines all four desserts into the final scene, positioning them side by side.
+
+Each dessert is created separately and then combined in the final scene. The colors and proportions are approximated based on the input image. The scene can be rendered by calling `library_call('dessert_scene')`.

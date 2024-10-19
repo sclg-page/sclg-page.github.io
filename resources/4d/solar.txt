@@ -1,0 +1,96 @@
+Here's a program that creates a simple solar system model using the provided `helper.py`:
+
+```python
+from helper import *
+
+"""
+solar system model
+"""
+
+@register()
+def sun() -> Shape:
+    return primitive_call('sphere', shape_kwargs={'radius': 0.5}, color=(1, 0.7, 0))
+
+@register()
+def planet(radius: float, color: tuple[float, float, float]) -> Shape:
+    return primitive_call('sphere', shape_kwargs={'radius': radius}, color=color)
+
+@register()
+def orbit(radius: float) -> Shape:
+    points = 100
+    orbit_shape = []
+    for i in range(points):
+        angle = 2 * math.pi * i / points
+        x = radius * math.cos(angle)
+        z = radius * math.sin(angle)
+        orbit_point = primitive_call('sphere', shape_kwargs={'radius': 0.01}, color=(0.5, 0.5, 0.5))
+        orbit_shape.append(transform_shape(orbit_point, translation_matrix((x, 0, z))))
+    return concat_shapes(*orbit_shape)
+
+@register()
+def solar_system() -> Shape:
+    sun_shape = library_call('sun')
+    mercury_orbit = library_call('orbit', radius=1.5)
+    venus_orbit = library_call('orbit', radius=2.5)
+    earth_orbit = library_call('orbit', radius=3.5)
+    mars_orbit = library_call('orbit', radius=4.5)
+    
+    return concat_shapes(
+        sun_shape,
+        mercury_orbit,
+        venus_orbit,
+        earth_orbit,
+        mars_orbit
+    )
+
+@register_animation()
+def solar_system_animation() -> Generator[Shape, None, None]:
+    total_frames = 120
+    
+    for frame in range(total_frames):
+        t = frame / total_frames
+        
+        sun = library_call('sun')
+        
+        mercury = transform_shape(
+            library_call('planet', radius=0.1, color=(0.7, 0.7, 0.7)),
+            rotation_matrix(t * 4 * math.pi, (0, 1, 0), (0, 0, 0)) @ translation_matrix((1.5, 0, 0))
+        )
+        
+        venus = transform_shape(
+            library_call('planet', radius=0.15, color=(0.9, 0.7, 0.4)),
+            rotation_matrix(t * 3 * math.pi, (0, 1, 0), (0, 0, 0)) @ translation_matrix((2.5, 0, 0))
+        )
+        
+        earth = transform_shape(
+            library_call('planet', radius=0.17, color=(0.2, 0.4, 0.8)),
+            rotation_matrix(t * 2 * math.pi, (0, 1, 0), (0, 0, 0)) @ translation_matrix((3.5, 0, 0))
+        )
+        
+        mars = transform_shape(
+            library_call('planet', radius=0.13, color=(0.8, 0.3, 0.1)),
+            rotation_matrix(t * 1.5 * math.pi, (0, 1, 0), (0, 0, 0)) @ translation_matrix((4.5, 0, 0))
+        )
+        
+        solar_system = library_call('solar_system')
+        
+        yield concat_shapes(solar_system, sun, mercury, venus, earth, mars)
+```
+
+This program creates a simple solar system model with the following components:
+
+1. A sun at the center.
+2. Four planets (Mercury, Venus, Earth, and Mars) orbiting around the sun.
+3. Orbit paths for each planet.
+
+The `solar_system_animation` function generates an animation of the planets orbiting around the sun. Each planet moves at a different speed, simulating their relative orbital periods.
+
+Here's a breakdown of the functions:
+
+- `sun()`: Creates a yellow sphere representing the sun.
+- `planet(radius, color)`: Creates a sphere with the given radius and color, representing a planet.
+- `orbit(radius)`: Creates a circular orbit path at the given radius.
+- `solar_system()`: Combines the sun and orbit paths into a static solar system model.
+- `solar_system_animation()`: Animates the planets orbiting around the sun.
+
+The animation runs for 120 frames, with each planet completing a different fraction of its orbit in that time. The sun remains stationary at the center while the planets rotate around it.

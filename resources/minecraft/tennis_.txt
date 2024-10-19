@@ -1,0 +1,129 @@
+Here's a detailed model of a tennis court using the provided `helper.py`:
+
+```python
+from helper import *
+
+"""
+a detailed model of a tennis court
+"""
+
+@register()
+def tennis_court() -> Shape:
+    return concat_shapes(
+        library_call('court_surface'),
+        library_call('court_lines'),
+        library_call('net'),
+        library_call('posts'),
+        library_call('sidelines')
+    )
+
+@register()
+def court_surface() -> Shape:
+    # Standard tennis court dimensions: 78 feet (23.77 meters) long and 36 feet (10.97 meters) wide
+    # We'll scale it down by a factor of 2 for better visibility
+    return primitive_call('set_cuboid', block_type='minecraft:grass_block', scale=(39, 1, 55), fill=True)
+
+@register()
+def court_lines() -> Shape:
+    return concat_shapes(
+        library_call('baseline', z=0),
+        library_call('baseline', z=54),
+        library_call('singles_sideline', x=1),
+        library_call('singles_sideline', x=37),
+        library_call('doubles_sideline', x=0),
+        library_call('doubles_sideline', x=38),
+        library_call('service_line', z=18),
+        library_call('service_line', z=36),
+        library_call('center_service_line')
+    )
+
+@register()
+def baseline(z: int) -> Shape:
+    return primitive_call('set_cuboid', block_type='minecraft:white_concrete', scale=(37, 1, 1), fill=True)
+
+@register()
+def singles_sideline(x: int) -> Shape:
+    return transform_shape(
+        primitive_call('set_cuboid', block_type='minecraft:white_concrete', scale=(1, 1, 55), fill=True),
+        translation_matrix([x, 1, 0])
+    )
+
+@register()
+def doubles_sideline(x: int) -> Shape:
+    return transform_shape(
+        primitive_call('set_cuboid', block_type='minecraft:white_concrete', scale=(1, 1, 55), fill=True),
+        translation_matrix([x, 1, 0])
+    )
+
+@register()
+def service_line(z: int) -> Shape:
+    return transform_shape(
+        primitive_call('set_cuboid', block_type='minecraft:white_concrete', scale=(27, 1, 1), fill=True),
+        translation_matrix([6, 1, z])
+    )
+
+@register()
+def center_service_line() -> Shape:
+    return transform_shape(
+        primitive_call('set_cuboid', block_type='minecraft:white_concrete', scale=(1, 1, 18), fill=True),
+        translation_matrix([19, 1, 18])
+    )
+
+@register()
+def net() -> Shape:
+    return concat_shapes(
+        transform_shape(
+            primitive_call('set_cuboid', block_type='minecraft:black_wool', scale=(39, 4, 1), fill=False),
+            translation_matrix([0, 1, 27])
+        ),
+        transform_shape(
+            primitive_call('set_cuboid', block_type='minecraft:iron_bars', scale=(39, 3, 1), fill=True),
+            translation_matrix([0, 1, 27])
+        )
+    )
+
+@register()
+def posts() -> Shape:
+    return concat_shapes(
+        library_call('post', x=0),
+        library_call('post', x=38)
+    )
+
+@register()
+def post(x: int) -> Shape:
+    return transform_shape(
+        primitive_call('set_cuboid', block_type='minecraft:oak_fence', scale=(1, 5, 1), fill=True),
+        translation_matrix([x, 1, 27])
+    )
+
+@register()
+def sidelines() -> Shape:
+    return concat_shapes(
+        library_call('sideline_seats', x=-3),
+        library_call('sideline_seats', x=42)
+    )
+
+@register()
+def sideline_seats(x: int) -> Shape:
+    def create_seat_row(i: int) -> Shape:
+        return transform_shape(
+            primitive_call('set_cuboid', block_type='minecraft:oak_stairs', 
+                           block_kwargs={'facing': 'east' if x < 0 else 'west', 'half': 'bottom'},
+                           scale=(1, 1, 55), fill=True),
+            translation_matrix([x + (i if x < 0 else -i), i + 1, 0])
+        )
+    
+    return loop(3, create_seat_row)
+```
+
+This program creates a detailed model of a tennis court with the following features:
+
+1. A grass court surface
+2. White court lines including baselines, singles and doubles sidelines, service lines, and center service line
+3. A net made of black wool and iron bars
+4. Net posts made of oak fences
+5. Sideline seating areas on both sides of the court, made of oak stairs
+
+The court dimensions are scaled down by a factor of 2 for better visibility in Minecraft. The court is centered at (0, 0, 0) and extends primarily in the positive x and z directions.
+
+The `tennis_court()` function combines all these elements to create the complete tennis court model. You can generate the court by calling `library_call('tennis_court')` in your main program.

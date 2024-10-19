@@ -1,0 +1,83 @@
+Here's a program that creates a carousel with a small canopy using the provided `helper.py`:
+
+```python
+from helper import *
+
+"""
+carousel with a small canopy
+"""
+
+@register()
+def carousel_base() -> Shape:
+    base = primitive_call('cylinder', shape_kwargs={'radius': 2, 'p0': (0, 0, 0), 'p1': (0, 0.2, 0)}, color=(0.6, 0.4, 0.2))
+    return base
+
+@register()
+def carousel_platform() -> Shape:
+    platform = primitive_call('cylinder', shape_kwargs={'radius': 1.8, 'p0': (0, 0.2, 0), 'p1': (0, 0.3, 0)}, color=(0.8, 0.8, 0.8))
+    return platform
+
+@register()
+def carousel_pole() -> Shape:
+    pole = primitive_call('cylinder', shape_kwargs={'radius': 0.1, 'p0': (0, 0.3, 0), 'p1': (0, 3, 0)}, color=(0.7, 0.7, 0.7))
+    return pole
+
+@register()
+def carousel_horse() -> Shape:
+    body = primitive_call('cylinder', shape_kwargs={'radius': 0.2, 'p0': (0, 0, -0.4), 'p1': (0, 0, 0.4)}, color=(1, 1, 1))
+    head = primitive_call('sphere', shape_kwargs={'radius': 0.15}, color=(1, 1, 1))
+    head = transform_shape(head, translation_matrix((0, 0.2, -0.5)))
+    legs = loop(4, lambda i: transform_shape(
+        primitive_call('cylinder', shape_kwargs={'radius': 0.05, 'p0': (0, 0, 0), 'p1': (0, -0.5, 0)}, color=(1, 1, 1)),
+        translation_matrix((0.15 * (-1 if i % 2 == 0 else 1), -0.2, 0.3 * (-1 if i < 2 else 1)))
+    ))
+    horse = concat_shapes(body, head, legs)
+    return transform_shape(horse, translation_matrix((0, 1, 0)))
+
+@register()
+def carousel_horses() -> Shape:
+    return loop(4, lambda i: transform_shape(
+        library_call('carousel_horse'),
+        rotation_matrix(i * math.pi / 2, (0, 1, 0), (0, 0, 0)) @ translation_matrix((1.5, 0, 0))
+    ))
+
+@register()
+def canopy() -> Shape:
+    cone = primitive_call('cylinder', shape_kwargs={'radius': 2, 'p0': (0, 3, 0), 'p1': (0, 3.5, 0)}, color=(1, 0.5, 0.5))
+    top = primitive_call('sphere', shape_kwargs={'radius': 0.1}, color=(1, 0.7, 0.7))
+    top = transform_shape(top, translation_matrix((0, 3.6, 0)))
+    return concat_shapes(cone, top)
+
+@register()
+def carousel() -> Shape:
+    base = library_call('carousel_base')
+    platform = library_call('carousel_platform')
+    pole = library_call('carousel_pole')
+    horses = library_call('carousel_horses')
+    canopy_shape = library_call('canopy')
+    return concat_shapes(base, platform, pole, horses, canopy_shape)
+
+@register_animation()
+def carousel_animation() -> Generator[Shape, None, None]:
+    total_frames = 60
+    for frame in range(total_frames):
+        angle = frame * 2 * math.pi / total_frames
+        rotated_carousel = transform_shape(
+            library_call('carousel'),
+            rotation_matrix(angle, (0, 1, 0), (0, 0, 0))
+        )
+        yield rotated_carousel
+```
+
+This program creates a carousel with a small canopy. Here's a breakdown of the components:
+
+1. `carousel_base`: A cylindrical base for the carousel.
+2. `carousel_platform`: A slightly smaller cylinder on top of the base.
+3. `carousel_pole`: A central pole for the carousel.
+4. `carousel_horse`: A simple horse shape made from cylinders and a sphere.
+5. `carousel_horses`: Four horses arranged around the central pole.
+6. `canopy`: A small conical canopy with a spherical top.
+7. `carousel`: Combines all the components to create the complete carousel.
+8. `carousel_animation`: An animation that rotates the carousel.
+
+The carousel is designed with a modular approach, allowing easy modifications and adjustments to individual components. The animation function rotates the entire carousel, simulating its movement.

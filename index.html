@@ -1,552 +1,525 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>The Scene Language: Representing Scenes with Programs, Words, and Embeddings</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../template/assets/main.css">
+    <link rel="stylesheet" href="../template/assets/index.css">
+    <link rel="stylesheet" href="assets/index.css">
+    <title>The Scene Language: Representing Scenes with Programs, Words, and Embeddings</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q73N03JLML"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
-
-  <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="./static/css/index.css">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <!-- <script src="./static/js/index.js"></script> -->
-
-  <style>
-    /* text-3d, i.e. 2 columns container */
-    .text-3d-container {
-            position: relative;
-            width: 800px;
-            margin: 20px auto;
-        }
-
-    .text-3d-container img {
-        top: -10px;
-        width: 100%;
-        height: auto;
-    }
-
-    /* .text-3d-text-left {
-        position: absolute;
-        top: 90%;
-        left: 200px;
-        transform: translateX(-50%);
-    }
-
-    .text-3d-text-right {
-        position: absolute;
-        top: 90%;
-        left: 600px;
-        transform: translateX(-50%);
-    } */
-
-    .text-3d-text-center {
-        position: absolute;
-        top: 20px;
-        left: 400px;
-        transform: translateX(-50%);
-        font-size: 18px;
-        font-weight: bold;
-        font-style: italic;
-    }
-
-    .text-3d-container .bottom-text {
-        position: relative;
-        width: 800px;
-        margin: 0 auto;
-        margin-bottom: 100px;
-    }
-
-    .text-3d-container .bottom-text .text-left {
-        position: absolute;
-        left: 200px;
-        transform: translateX(-50%);
-    }
-
-    .text-3d-container .bottom-text .text-right {
-        position: absolute;
-        left: 600px;
-        transform: translateX(-50%);
-    }
-
-    /* user-study, i.e. 3 columns container */
-    .userstudy-container {
-        width: 900px;
-        margin: 0 auto;
-        text-align: center;
-    }
-
-    .userstudy-container .text-center {
-        font-size: 18px;
-        text-align: center;
-        margin-bottom: 20px;
-        font-weight: bold;
-        font-style: italic;
-    }
-
-    .userstudy-container img {
-        width: 900px;
-        display: block;
-        margin: 0 auto;
-        margin-bottom: 20px;
-    }
-
-    .userstudy-container .bottom-text-container {
-        position: relative;
-        width: 900px;
-        margin: 0 auto;
-        margin-bottom: 100px;
-    }
-
-    .userstudy-container .bottom-text-container .text-1 {
-        position: absolute;
-        left: 150px;
-        transform: translateX(-50%);
-    }
-
-    .userstudy-container .bottom-text-container .text-2 {
-        position: absolute;
-        left: 450px;
-        transform: translateX(-50%);
-    }
-
-    .userstudy-container .bottom-text-container .text-3 {
-        position: absolute;
-        left: 750px;
-        transform: translateX(-50%);
-    }
-
-    /* 4d */
-
-    #image-text-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .image-text-block {
-        text-align: center;
-        flex: 1;
-        margin: 0 10px;
-    }
-
-    .image-text-block img {
-        width: 100%;
-        max-width: 250px;
-        height: auto;
-        display: block;
-        margin: 0 auto;
-    }
-
-    .image-text-block p {
-        margin-bottom: 10px;
-        font-size: 18px;
-        font-weight: bold;
-        font-style: italic;
-    }
-
-    p {
-        margin: 0;
-    }
-</style>
-
+        gtag('config', 'G-Q73N03JLML');
+    </script>
 </head>
-
 <body>
-
-    <section class="hero">
-        <div class="hero-body">
-          <div class="container is-max-desktop">
-            
-            <br>
-      
-            <div class="columns is-centered">
-              <div class="column has-text-centered">
-                <h1 class="title is-3 publication-title" style="font-size: 2.2rem;">The Scene Language: Representing Scenes with Programs, Words, and Embeddings</h1>
-                <div class="is-size-5 publication-authors">
-                  <span class="author-block">
-                    Anonymous Submission 809
-                  </span>
-                </div>
-      
-                <div class="is-size-5 publication-authors">
-                  <span class="author-block">ICLR 2025</span>
-                </div>
-      
-              </div>
-            </div>
-          </div>
+<!--==================== HEADER ====================-->
+<header class="header" id="header">
+    <nav class="nav container">
+        <a href="#" class="nav__logo"><i class="nav__home_icon"></i></a>
+        <div class="nav__menu" id="nav-menu">
+            <ul class="nav__list grid">
+                <li>
+                    <a href="#abstract" class="nav__link">Abstract</a>
+                </li>
+                <li>
+                    <a href="#text-cond" class="nav__link">Text-to-3D</a>
+                </li>
+                <li>
+                    <a href="#4d" class="nav__link">Text-to-4D</a>
+                </li>
+                <li>
+                    <a href="#renderers" class="nav__link">Renderers</a>
+                </li>
+                <li>
+                    <a href="#image-cond" class="nav__link">Image-to-3D</a>
+                </li>
+                <li>
+                    <a href="#baselines" class="nav__link">Baselines</a>
+                </li>
+                <li>
+                    <a href="#pipeline" class="nav__link">Pipeline</a>
+                </li>
+            </ul>
+            <i class="nav__close nav__icon nav__close_icon" id="nav-close"></i>
         </div>
-      </section>
 
-    
-    <section class="section">
-        <div class="container is-max-desktop">
-            <div class="columns is-centered">
-                <div class="column is-full-width has-text-centered">
-                    <h2 class="title is-4">Text-conditioned Scene Generation Results Used in the User Study</h2>
+        <div class="nav__btns">
+            <i class="nav__toggle nav__icon nav__toggle_icon" id="nav-toggle"></i>
+        </div>
+    </nav>
+</header>
+<!--==================== MAIN ====================-->
+<main class="main">
+    <div class="paper__content-dummy"></div>
+    <a class="anchor" id="home"></a>
+    <section class="home section container">
+        <div class="paper__title">
+            The Scene Language: Representing Scenes with <br>Programs, Words, and Embeddings
+        </div>
+        <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
+            <div class="paper__venue">ICLR 2025</div>
+        </div>
+        <div class="paper__section-grid" style="grid-template-columns: repeat(5, 1fr)">
+            <div class="paper__author"><a>Anonymous Submission 809</a></div>
+        </div>
 
-                    <div class="content has-text-justified">
-                        <p>
-                          We show the comparisons of 3D generation results between <b>MVDream (left)</b>, 
-                          <b>Graphdreamer (middle)</b> and <b>ours (right)</b>, with the same text prompt shown 
-                          on top of each result. Our method achieves more favorable prompt alignment 
-                          than the baselines and has a clear advantage in counting accuracy.
-                        </p>
-                      </div>
-                    
-                      <div class="content has-text-centered">
-
-                        <div class="userstudy-container">
-                            <div class="text-center">15 coke cans stacking in a pyramid</div>
-                            <img src='resources/user_study/0000.gif'>
-                            <div class="bottom-text-container">
-                                <div class="text-1">MVDream</div>
-                                <div class="text-2">Graphdreamer</div>
-                                <div class="text-3">Ours</div>
-                            </div>
-                        </div>
-
-                        <div class="userstudy-container">
-                            <div class="text-center">A 5x5 grid of white and black chess pieces on a square board</div>
-                            <img src='resources/user_study/0001.gif'>
-                            <div class="bottom-text-container">
-                                <div class="text-1">MVDream</div>
-                                <div class="text-2">Graphdreamer</div>
-                                <div class="text-3">Ours</div>
-                            </div>
-                        </div>
-
-                        <div class="userstudy-container">
-                            <div class="text-center">A nursery with 7x7 of potted plants</div>
-                            <img src='resources/user_study/0002.gif'>
-                            <div class="bottom-text-container">
-                                <div class="text-1">MVDream</div>
-                                <div class="text-2">Graphdreamer</div>
-                                <div class="text-3">Ours</div>
-                            </div>
-                        </div>
-
-                        <div class="userstudy-container">
-                            <div class="text-center">A room with four desks, each with one computer monitor on it</div>
-                            <img src='resources/user_study/0003.gif'>
-                            <div class="bottom-text-container">
-                                <div class="text-1">MVDream</div>
-                                <div class="text-2">Graphdreamer</div>
-                                <div class="text-3">Ours</div>
-                            </div>
-                        </div>
-
-                        <div class="userstudy-container">
-                            <div class="text-center">6 bottles of water arranged in a circle around a small potted plant</div>
-                            <img src='resources/user_study/0004.gif'>
-                            <div class="bottom-text-container">
-                                <div class="text-1">MVDream</div>
-                                <div class="text-2">Graphdreamer</div>
-                                <div class="text-3">Ours</div>
-                            </div>
-                        </div>
-
-                        <div class="userstudy-container">
-                            <div class="text-center">A 8-layer 3-color Jenga set at game start</div>
-                            <img src='resources/user_study/0005.gif'>
-                            <div class="bottom-text-container">
-                                <div class="text-1">MVDream</div>
-                                <div class="text-2">Graphdreamer</div>
-                                <div class="text-3">Ours</div>
-                            </div>
-                        </div>
-
-                        <div class="userstudy-container">
-                            <div class="text-center">7 different sized Russian nesting dolls lined up</div>
-                            <img src='resources/user_study/0006.gif'>
-                            <div class="bottom-text-container">
-                                <div class="text-1">MVDream</div>
-                                <div class="text-2">Graphdreamer</div>
-                                <div class="text-3">Ours</div>
-                            </div>
-                        </div>
-
-                        <div class="userstudy-container">
-                            <div class="text-center">A 8-layer shelf</div>
-                            <img src='resources/user_study/0007.gif'>
-                            <div class="bottom-text-container">
-                                <div class="text-1">MVDream</div>
-                                <div class="text-2">Graphdreamer</div>
-                                <div class="text-3">Ours</div>
-                            </div>
-                        </div>
-
-                        <div class="userstudy-container">
-                            <div class="text-center">Three cokes in a close circle</div>
-                            <img src='resources/user_study/0008.gif'>
-                            <div class="bottom-text-container">
-                                <div class="text-1">MVDream</div>
-                                <div class="text-2">Graphdreamer</div>
-                                <div class="text-3">Ours</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h2 class="title is-4">Additional Text-conditioned 3D Generation Results</h2>
-
-                    <div class="content has-text-justified">
-                        <p>
-                          Here we show more text-conditioned 3D generation results based on proposed Scene Language,
-                          with text prompt on top of each result. We show the results using <b>primitive-based renderer (left)</b> 
-                          and <b>SDS-based renderer (right)</b>.
-                        </p>
-                    </div>
-
-                    <div class="content has-text-centered">
-                        
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">A full-length piano keyboard</p>
-                            <img src="resources/text-to-3d/0000piano_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">The Goldfish by Henri Matisse</p>
-                            <img src="resources/text-to-3d/0001Goldfish_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">A monitor, a keyboard, a mouse, a metal photo frame, and a plant on a wooden desk top</p>
-                            <img src="resources/text-to-3d/0002desktop_setup_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">Bramante Staircase, Vatican Museums</p>
-                            <img src="resources/text-to-3d/0003staircase_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">A fractal tree</p>
-                            <img src="resources/text-to-3d/0004fractal_tree_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-                        
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">Rene Magritte The Son of Man</p>
-                            <img src="resources/text-to-3d/0005Son_of_Man_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">A chessboard at game start</p>
-                            <img src="resources/text-to-3d/0006chessboard_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">A bookshelf</p>
-                            <img src="resources/text-to-3d/0007bookshelf_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">City skyline at sunset</p>
-                            <img src="resources/text-to-3d/0008city_skyline_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">Lincoln Memorial</p>
-                            <img src="resources/text-to-3d/0009Lincoln_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">A still life painting from Paul Cezanne</p>
-                            <img src="resources/text-to-3d/0010Cezane_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-                        
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">Paul Klee Castle and Sun</p>
-                            <img src="resources/text-to-3d/0011castle_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-                        
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">A scene of Moai in Ahu Akivi, with slight variations</p>
-                            <img src="resources/text-to-3d/0012Monai_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">A still life painting from Giorgio Morandi</p>
-                            <img src="resources/text-to-3d/0013Morandi_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">A plant on a small coffee table</p>
-                            <img src="resources/text-to-3d/0014plant_on_table_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-
-                        <div class="text-3d-container">
-                            <p class="text-3d-text-center">A scene inspired by The Angelus, Millet</p>
-                            <img src="resources/text-to-3d/0015Angulus_.gif" alt="Sample Image">
-                            <div class="bottom-text">
-                                <div class="text-left">Primitive-based</div>
-                                <div class="text-right">SDS-based</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <br><br><br>
-
-                    <h2 class="title is-4">Image-conditioned 3D Generation Results</h2>
-
-                    <div class="content has-text-justified">
-                        <p>
-                          Here we show image-conditioned 3D generation results based on proposed Scene Language,
-                          including <b>original image condition (left)</b>, <b>primitive-based renderer (middle) results</b> 
-                          and <b>SDS-based renderer (right) results</b>.
-                        </p>
-                    </div>
-
-                    <div class="userstudy-container">
-                        <img src='resources/img-to-3d/cokes.gif'>
-                        <div class="bottom-text-container">
-                            <div class="text-1">Image condition</div>
-                            <div class="text-2">Primitive-based</div>
-                            <div class="text-3">SDS-based</div>
-                        </div>
-                    </div>
-
-                    <div class="userstudy-container">
-                        <img src='resources/img-to-3d/vases.gif'>
-                        <div class="bottom-text-container">
-                            <div class="text-1">Image condition</div>
-                            <div class="text-2">Primitive-based</div>
-                            <div class="text-3">SDS-based</div>
-                        </div>
-                    </div>
-
-                    <div class="userstudy-container">
-                        <img src='resources/img-to-3d/wayne.gif'>
-                        <div class="bottom-text-container">
-                            <div class="text-1">Image condition</div>
-                            <div class="text-2">Primitive-based</div>
-                            <div class="text-3">SDS-based</div>
-                        </div>
-                    </div>
-
-                    <h2 class="title is-4">Text-conditioned 4D Scene Generation Results</h2>
-
-                    <div class="content has-text-justified">
-                        <p>
-                          We show the results of proposed Scene Language applied for synthesizing 4D scenes, 
-                          including text prompt for the scene and the generated 4D scene.
-                        </p>
-                    </div>
-
-                    <div id="image-text-container">
-                        <div class="image-text-block">
-                          <p>Carousel with a small canopy</p>
-                          <img src="resources/4d/carousel.gif" alt="Image 1">
-                        </div>
-                        
-                        <!-- Second image-text block -->
-                        <div class="image-text-block">
-                          <p>Solar system model</p>
-                          <img src="resources/4d/solar.gif" alt="Image 2">
-                        </div>
-                        
-                        <!-- Third image-text block -->
-                        <div class="image-text-block">
-                          <p>A toy wind turbine</p>
-                          <img src="resources/4d/wind.gif" alt="Image 3">
-                        </div>
-                      </div>
-
+    </section>
+    <a class="anchor" id="abstract"></a>
+    <section class="section container">
+        <div class="paper__section-title">Abstract</div>
+        <div class="example-container">
+            <p>
+We introduce the Scene Language, a visual scene representation that concisely and precisely describes the structure, semantics, and identity of visual scenes.
+It represents a scene with three key components: a program that specifies the hierarchical and relational structure of entities in the scene,
+words in natural language that summarize the semantic class of each entity, and embeddings that capture the visual identity of each entity.
+This representation can be <a href="#pipeline">inferred</a> from pre-trained language models via a training-free inference technique, given text or image inputs.
+The resulting scene can be <a href="#renderers">rendered</a> into images using traditional, neural, or hybrid graphics renderers.
+Together, this forms a robust, automated system for high-quality <a href="#text-cond">3D</a> and <a href="#4d">4D</a> scene generation.
+<a href="#baselines">Compared</a> with existing representations like scene graphs, our proposed Scene Language generates complex scenes with higher fidelity,
+while explicitly modeling the scene structures to enable precise control and editing.
+            </p>
+            <br>
+            <p>
+                Below shows various applications of the proposed <a href="#pipeline">pipeline</a>.
+                Each video is a 360-degree scene rendering of the output scene.
+                Clicking "Show Response" buttons reveals raw language model response,
+                which contains the program and word components of the full representation.
+            </p>
+        </div>
+    </section>
+    <a class="anchor" id="text-cond"></a>
+    <section class="section container">
+        <div class="paper__section-title">Text-Conditioned Generation and Editing</div>
+        <div class="example-container">
+            <div class="paper__section-paragraph">
+                <p>
+                    This section shows results on text-conditioned 3D scene generation (left column)
+                    and editing-instruction-following (right column), with text inputs shown below the corresponding output renderings.
+                    Our representation provides an intuitive interface for controllable scene generation and editing, as
+                    1) program function names correspond to words in natural language, offering interpretable semantic meanings,
+                    and 2) program structure reflects scene structure, enabling significant scene changes through simple, one-line edits while preserving overall structure.
+                </p>
+            </div>
+            <div class="video-row paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/chessboard_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">A chessboard at game start</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/chessboard.txt')">Show Response</button>
                 </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/chessboard_edit.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">Make a starting chess move</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/chessboard_edit.txt')">Show Response</button>
+                </div>
+                <div class="text-content"></div>
+            </div>
+            <div class="video-row paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/fractal_tree_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">A fractal tree</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/fractal_tree.txt')">Show Response</button>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/fractal_tree_edit.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">Make branching structure to be trinary and 3D</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/fractal_tree_edit.txt')">Show Response</button>
+                </div>
+                <div class="text-content"></div>
+            </div>
+            <div class="video-row paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/Jenga_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">A 8-layer 3-color Jenga set at game start</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/Jenga.txt')">Show Response</button>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/Jenga_edit.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">Remove 2 blocks from second top layer and the tower should not fall</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/Jenga_edit.txt')">Show Response</button>
+                </div>
+                <div class="text-content"></div>
+            </div>
+            <div class="video-row paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/Moai_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">Moai in Ahu Akivi, with slight variations</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/Moai.txt')">Show Response</button>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/Moai_edit.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">Make every two statues face to each other</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/Moai_edit.txt')">Show Response</button>
+                </div>
+                <div class="text-content"></div>
+            </div>
+            <div class="video-row paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/Son_of_Man_4_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">René Magritte The Son of Man</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/Son_of_Man_4.txt')">Show Response</button>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/Son_of_Man_4_edit.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">Move the apple to left</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/Son_of_Man_4_edit.txt')">Show Response</button>
+                </div>
+                <div class="text-content"></div>
+            </div>
+            <div class="video-row paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/staircase_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">Bramante Staircase, Vatican Museums</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/staircase.txt')">Show Response</button>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/staircase_edit.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">Shrink staircase radius by 80%</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/staircase_edit.txt')">Show Response</button>
+                </div>
+                <div class="text-content"></div>
+            </div>
+            <div class="video-row paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/castle2_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">Paul Klee Castle and Sun</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/castle2.txt')">Show Response</button>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/edit/castle2_edit.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">Change all castles to be the middle one</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/edit/castle2_edit.txt')">Show Response</button>
+                </div>
+                <div class="text-content"></div>
             </div>
         </div>
     </section>
-    
-
-      <footer class="footer">
-        <div class="container">
-          <div class="columns is-centered">
-            <div class="column is-8">
-              <div class="content">
+    <a class="anchor" id="4d"></a>
+    <section class="section container">
+        <div class="paper__section-title">Text-Conditioned 4D Generation</div>
+        <div class="example-container">
+            <div class="paper__section-paragraph">
                 <p>
-                  This webpage template is adapted from <a
-                  href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>, under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0 License</a>.
+                    The proposed representation captures the structure not only for static, but also for dynamic scenes,
+                    and can be applied for synthesizing 4D scenes conditioned on text inputs.
+                    It explicitly represents the temporal correspondence of entities&mdash;click the button below for tracking visualizations.
                 </p>
-              </div>
             </div>
-          </div>
+            <button id="globalToggleBtn" class="global-toggle-btn" onclick="toggleAllVideos()">Show All Tracking</button>
+            <div class="video-row paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+                <div class="tracking-video-container">
+                    <video controls loop muted autoplay src="resources/4d/wind.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">A toy wind turbine</p>
+                    <!--                    <button class="toggle-btn" onclick="toggleVideo(this)">Show Tracking</button>-->
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/4d/wind.txt')">Show Response</button>
+                </div>
+                <div class="tracking-video-container">
+                    <video controls loop muted autoplay src="resources/4d/carousel.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">Carousel with a small canopy</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/4d/carousel.txt')">Show Response</button>
+                </div>
+                <div class="tracking-video-container">
+                    <video controls loop muted autoplay src="resources/4d/solar.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="caption">Solar system model</p>
+                    <button class="toggle-btn" onclick="toggleText(this, 'resources/4d/solar.txt')">Show Response</button>
+                </div>
+                <div class="text-content"></div>
+            </div>
         </div>
-      </footer>
+    </section>
+    <a class="anchor" id="renderers"></a>
+    <section class="section container">
+        <div class="paper__section-title">Alternative Renderers</div>
+        <div class="example-container">
+            <div class="paper__section-paragraph">
+                <p>The same representation can be rendered with different renderers, showing the
+                versatility of the proposed representation. Different renderers produce renderings that adhere
+                to the same representation and therefore are visually
+                aligned, while each exhibits a different imaging style.
+                The following shows text-conditioned 3D generation results, with the renderer names and input text prompts shown below corresponding renderings.</p>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/minecraft/tennis_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Minecraft</p>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/minecraft/tennis_-mi.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Mitsuba</p>
+                </div>
+            </div>
+            <div class="video-row">
+                <p class="caption">A detailed model of a tennis court</p>
+                <button class="toggle-btn" onclick="toggleText(this, 'resources/minecraft/tennis_.txt')">Show Response</button>
+                <div class="text-content"></div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/minecraft/lecture_hall_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Minecraft</p>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/minecraft/lecture_hall_-mi.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Mitsuba</p>
+                </div>
+            </div>
+            <div class="video-row">
+                <p class="caption">An interior scene of a university lecture hall</p>
+                <button class="toggle-btn" onclick="toggleText(this, 'resources/minecraft/lecture_hall_.txt')">Show Response</button>
+                <div class="text-content"></div>
+            </div>
+        </div>
+<!--    </section>-->
+<!--    <section class="section container">-->
+<!--        <div class="paper__section-title">Alternative Renderers</div>-->
+        <div class="example-container">
+            <div class="paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/text-cond/Angulus_-mi.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Mitsuba</p>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/text-cond/Angulus_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Gaussians</p>
+                </div>
+            </div>
+            <div class="video-row">
+                <p class="caption">A scene inspired by The Angelus, Millet</p>
+                <button class="toggle-btn" onclick="toggleText(this, 'resources/text-cond/Angulus.txt')">Show Response</button>
+                <div class="text-content"></div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/text-cond/Goldfish_-mi.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Mitsuba</p>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/text-cond/Goldfish_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Gaussians</p>
+                </div>
+            </div>
+            <div class="video-row">
+                <p class="caption">The Goldfish by Henri Matisse</p>
+                <button class="toggle-btn" onclick="toggleText(this, 'resources/text-cond/Goldfish.txt')">Show Response</button>
+                <div class="text-content"></div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/text-cond/Morandi_-mi.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Mitsuba</p>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/text-cond/Morandi_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Gaussians</p>
+                </div>
+            </div>
+            <div class="video-row">
+                <p class="caption">A still life painting from Giorgio Morandi</p>
+                <button class="toggle-btn" onclick="toggleText(this, 'resources/text-cond/Morandi.txt')">Show Response</button>
+                <div class="text-content"></div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/text-cond/desktop_setup_-mi.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Mitsuba</p>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/text-cond/desktop_setup_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Gaussians</p>
+                </div>
+            </div>
+            <div class="video-row">
+                <p class="caption">A monitor, a keyboard, a mouse, a metal photo frame, and a plant on a wooden desk top</p>
+                <button class="toggle-btn" onclick="toggleText(this, 'resources/text-cond/desktop_setup.txt')">Show Response</button>
+                <div class="text-content"></div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(2, 1fr)">
+                <div>
+                    <video controls loop muted autoplay src="resources/text-cond/Lincoln4_-mi.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Mitsuba</p>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/text-cond/Lincoln4_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Gaussians</p>
+                </div>
+            </div>
+            <div class="video-row">
+                <p class="caption">Lincoln Memorial</p>
+                <button class="toggle-btn" onclick="toggleText(this, 'resources/text-cond/Lincoln4_.txt')">Show Response</button>
+                <div class="text-content"></div>
+            </div>
+        </div>
+    </section>
+    <a class="anchor" id="image-cond"></a>
+    <section class="section container">
+        <div class="paper__section-title">Image-Conditioned Generation</div>
+        <div class="example-container">
+            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+                <div>
+<!--                    <div class="image-wrapper">-->
+                    <img src="resources/image-cond/image-ceramic_.png" alt="input">
+<!--                    </div>-->
+                    <p class="subcaption">Input image (credits: <a href="http://www.soniapedrazzini.it/index.html">Sonia Pedrazzini</a>)</p>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/image-cond/image-ceramic_-mi.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Mitsuba</p>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/image-cond/image-ceramic_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Gaussians</p>
+                </div>
+            </div>
+            <div class="video-row">
+                <button class="toggle-btn" onclick="toggleText(this, 'resources/image-cond/image-ceramic_.txt')">Show Response</button>
+                <div class="text-content"></div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+                <div>
+                    <img src="resources/image-cond/image-glasss_.png" alt="input">
+                    <p class="caption">Input image (credits: <a href="https://en.wikipedia.org/wiki/Wayne_Thiebaud">Wayne Thiebaud</a>)</p>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/image-cond/image-glasss_-mi.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Mitsuba</p>
+                </div>
+                <div>
+                    <video controls loop muted autoplay src="resources/image-cond/image-glasss_.mp4#t=0.001" type="video/mp4"></video>
+                    <p class="subcaption">Gaussians</p>
+                </div>
+            </div>
+            <div class="video-row">
+                <button class="toggle-btn" onclick="toggleText(this, 'resources/image-cond/image-glasss_.txt')">Show Response</button>
+                <div class="text-content"></div>
+            </div>
+<!--            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">-->
+<!--                <div class="image-wrapper">-->
+<!--                    <img src="resources/image-cond/image-6cokes_.png" alt="input">-->
+<!--                    <p class="caption">Input image</p>-->
+<!--                </div>-->
+<!--                <div>-->
+<!--                    <video controls loop muted autoplay src="resources/image-cond/image-6cokes_-mi.mp4#t=0.001" type="video/mp4"></video>-->
+<!--                </div>-->
+<!--                <div>-->
+<!--                    <video controls loop muted autoplay src="resources/image-cond/image-6cokes_.mp4#t=0.001" type="video/mp4"></video>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="video-row">-->
+<!--                <button class="toggle-btn" onclick="toggleText(this, 'resources/image-cond/image-6cokes_.txt')">Show Response</button>-->
+<!--                <div class="text-content"></div>-->
+<!--            </div>-->
+        </div>
+    </section>
+    <a class="anchor" id="baselines"></a>
+    <section class="section container">
+        <div class="paper__section-title">Baselines</div>
+        <div class="example-container">
+            <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
+                <div>
+                    <img src='resources/user_study/0007.gif'>
+                </div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+                <div>
+                    <p class="subcaption">MVDream</p>
+                </div>
+                <div>
+                    <p class="subcaption">GraphDreamer</p>
+                </div>
+                <div>
+                    <p class="subcaption">Ours</p>
+                </div>
+            </div>
+            <div><p class="caption">A 8-layer shelf</p></div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
+                <div>
+                    <img src='resources/user_study/0001.gif'>
+                </div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+                <div>
+                    <p class="subcaption">MVDream</p>
+                </div>
+                <div>
+                    <p class="subcaption">GraphDreamer</p>
+                </div>
+                <div>
+                    <p class="subcaption">Ours</p>
+                </div>
+            </div>
+            <div><p class="caption">A 5x5 grid of white and black chess pieces on a square board</p></div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
+                <div>
+                    <img src='resources/user_study/0006.gif'>
+                </div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+                <div>
+                    <p class="subcaption">MVDream</p>
+                </div>
+                <div>
+                    <p class="subcaption">GraphDreamer</p>
+                </div>
+                <div>
+                    <p class="subcaption">Ours</p>
+                </div>
+            </div>
+            <div><p class="caption">7 different sized Russian nesting dolls lined up</p></div>
+<!--                            <div class="text-center">7 different sized Russian nesting dolls lined up</div>-->
+<!--                            <img src='resources/user_study/0006.gif'>-->
 
+        </div>
+    </section>
+    <a class="anchor" id="pipeline"></a>
+    <section class="section container">
+        <div class="paper__section-title">Pipeline</div>
+        <div class="example-container">
+            <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
+                <div>
+                    <img src="resources/pipeline.png" alt="input">
+                </div>
+            </div>
+
+            <div class="paper__section-paragraph">
+                <p>
+<!--                    In the representation, a program consists of a set of entity functions, each defining a class of entities-->
+<!--                    and is associated with a word summarizing the semantic meaning of the defined class.-->
+<!--                    Each function receives input neural embeddings that specify attributes and identity of a specific entity from the class,-->
+<!--                    transforms and composes multiple sub-entities in the function body, and computes an entity output.-->
+<!--                    <br>-->
+                    To automatically <b>infer</b> the representation from text or image inputs, we convert the Scene Language grammar into Python and
+                    prompt Claude 3.5 Sonnet <a href="#ref1">[1]</a> to generate the non-neural components.
+                    Neural embeddings reside in the CLIP text embedding space <a href="#ref2">[2,3]</a>
+                    and are obtained from texts via the CLIP text encoder or inverted from images with a pre-trained text-to-image model <a href="#ref4">[4,5]</a>.
+                    A program interpreter <b>executes</b> the program and computes a data object for the scene.
+                    Afterward, a graphics renderer <b>renders</b> the data object into an image.
+                </p>
+            </div>
+        </div>
+    </section>
+    <section class="section container">
+        <div class="paper__section-title">Reference</div>
+        <div class="example-container">
+            <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
+                <ol>
+                    <li id="ref1">Anthropic. The Claude 3 model family: Opus, Sonnet, Haiku, 2024.</li>
+                    <li id="ref2">Gadre, S. Y., Ilharco, G., Fang, A., Hayase, J., Smyrnis, G., Nguyen, T., ... & Schmidt, L. (2024). Datacomp: In search of the next generation of multimodal datasets.</li>
+                    <li id="ref3">Radford, A., Kim, J. W., Hallacy, C., Ramesh, A., Goh, G., Agarwal, S., ... & Sutskever, I. (2021). Learning transferable visual models from natural language supervision.</li>
+                    <li id="ref4">Rombach, R., Blattmann, A., Lorenz, D., Esser, P., & Ommer, B. (2021). High-resolution image synthesis with latent diffusion models. </li>
+                    <li id="ref5">Gal, R., Alaluf, Y., Atzmon, Y., Patashnik, O., Bermano, A. H., Chechik, G., & Cohen-Or, D. (2022). An image is worth one word: Personalizing text-to-image generation using textual inversion. </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+</main>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script src="../template/assets/main.js"></script>
+<script src="assets/index.js"></script>
 </body>
 </html>

@@ -1,0 +1,62 @@
+Here's a modified version of the program that makes the branching structure trinary (three branches instead of two) and 3D:
+
+```python
+from helper import *
+
+"""
+Make branching structure to be trinary and 3D
+"""
+
+@register()
+def branch(length: float, radius: float, depth: int) -> Shape:
+    if depth == 0:
+        return primitive_call('cylinder', shape_kwargs={'radius': radius, 'p0': (0, 0, 0), 'p1': (0, length, 0)}, color=(0.6, 0.4, 0.2))
+
+    main_branch = primitive_call('cylinder', shape_kwargs={'radius': radius, 'p0': (0, 0, 0), 'p1': (0, length, 0)}, color=(0.6, 0.4, 0.2))
+
+    sub_branch_length = length * 0.7
+    sub_branch_radius = radius * 0.6
+
+    branch1 = library_call('branch', length=sub_branch_length, radius=sub_branch_radius, depth=depth-1)
+    branch2 = library_call('branch', length=sub_branch_length, radius=sub_branch_radius, depth=depth-1)
+    branch3 = library_call('branch', length=sub_branch_length, radius=sub_branch_radius, depth=depth-1)
+
+    angle = 0.5  # ~28.6 degrees
+
+    # Rotate branches in 3D
+    transform1 = translation_matrix((0, length, 0)) @ rotation_matrix(angle, (1, 0, 0), (0, 0, 0))
+    transform2 = translation_matrix((0, length, 0)) @ rotation_matrix(angle, (0, 0, 1), (0, 0, 0))
+    transform3 = translation_matrix((0, length, 0)) @ rotation_matrix(-angle, (1, 1, 0), (0, 0, 0))
+
+    return concat_shapes(
+        main_branch,
+        transform_shape(branch1, transform1),
+        transform_shape(branch2, transform2),
+        transform_shape(branch3, transform3)
+    )
+
+@register()
+def fractal_tree(base_length: float = 1.0, base_radius: float = 0.1, depth: int = 5) -> Shape:
+    tree = library_call('branch', length=base_length, radius=base_radius, depth=depth)
+    tree_min = compute_shape_min(tree)
+    return transform_shape(tree, translation_matrix((-tree_min[0], -tree_min[1], -tree_min[2])))
+```
+
+This modified version makes the following changes to create a trinary, 3D branching structure:
+
+1. In the `branch` function, we now create three sub-branches instead of two.
+
+2. The rotation axes for the branches have been changed to create a 3D structure:
+   - The first branch rotates around the x-axis.
+   - The second branch rotates around the z-axis.
+   - The third branch rotates around a diagonal axis (1, 1, 0).
+
+3. In the `fractal_tree` function, we now also account for the z-coordinate when translating the tree to the origin.
+
+These changes result in a more complex, 3D trinary branching structure. The tree now spreads out in three dimensions, creating a more intricate and realistic-looking fractal tree.
+
+You can create trees of different complexity by adjusting the `depth` parameter when calling `fractal_tree`, just as before. For example:
+- `library_call('fractal_tree', base_length=1.0, base_radius=0.1, depth=3)` for a simpler 3D trinary tree
+- `library_call('fractal_tree', base_length=1.0, base_radius=0.1, depth=7)` for a more complex 3D trinary tree
+
+This modified structure demonstrates how simple changes to the recursive rules can dramatically alter the resulting shape, creating a more complex and three-dimensional fractal tree.

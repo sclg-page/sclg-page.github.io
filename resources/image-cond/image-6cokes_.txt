@@ -1,0 +1,31 @@
+```python
+from helper import *
+
+"""
+Reconstruct the input scene
+"""
+
+@register()
+def soda_can(color: tuple[float, float, float] = (0.8, 0.1, 0.1)) -> Shape:
+    body = primitive_call('cylinder', shape_kwargs={'radius': 0.05, 'p0': (0, 0, 0), 'p1': (0, 0.15, 0)}, color=color)
+    top = primitive_call('cylinder', shape_kwargs={'radius': 0.05, 'p0': (0, 0.15, 0), 'p1': (0, 0.16, 0)}, color=(0.8, 0.8, 0.8))
+    return concat_shapes(body, top)
+
+@register()
+def soda_can_pack(num_cans: int, rows: int) -> Shape:
+    def can_placement(i: int) -> Shape:
+        row = i // (num_cans // rows)
+        col = i % (num_cans // rows)
+        x_offset = col * 0.11 - ((num_cans // rows - 1) * 0.11 / 2)
+        z_offset = row * 0.11 - ((rows - 1) * 0.11 / 2)
+        can = library_call('soda_can')
+        return transform_shape(can, translation_matrix((x_offset, 0, z_offset)))
+    
+    return loop(num_cans, can_placement)
+
+@register()
+def coca_cola_pack() -> Shape:
+    pack = library_call('soda_can_pack', num_cans=6, rows=2)
+    return pack
+
+```

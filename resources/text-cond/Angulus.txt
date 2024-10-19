@@ -1,0 +1,81 @@
+Here's a program inspired by "The Angelus" by Jean-François Millet, using the provided `helper.py`:
+
+```python
+from helper import *
+
+"""
+a scene inspired by The Angelus, Millet
+"""
+
+@register()
+def ground(width: float, length: float, height: float) -> Shape:
+    return primitive_call('cube', color=(0.6, 0.5, 0.3), shape_kwargs={'scale': (width, height, length)})
+
+@register()
+def person(height: float, color: tuple[float, float, float]) -> Shape:
+    body = primitive_call('cylinder', color=color, shape_kwargs={'radius': height/8, 'p0': (0, 0, 0), 'p1': (0, height*0.6, 0)})
+    head = primitive_call('sphere', color=color, shape_kwargs={'radius': height/8})
+    head = transform_shape(head, translation_matrix((0, height*0.7, 0)))
+    return concat_shapes(body, head)
+
+@register()
+def basket() -> Shape:
+    base = primitive_call('cylinder', color=(0.8, 0.6, 0.4), shape_kwargs={'radius': 0.15, 'p0': (0, 0, 0), 'p1': (0, 0.1, 0)})
+    handle = primitive_call('cylinder', color=(0.8, 0.6, 0.4), shape_kwargs={'radius': 0.02, 'p0': (-0.1, 0.1, 0), 'p1': (0.1, 0.3, 0)})
+    return concat_shapes(base, handle)
+
+@register()
+def pitchfork() -> Shape:
+    handle = primitive_call('cylinder', color=(0.4, 0.3, 0.2), shape_kwargs={'radius': 0.02, 'p0': (0, 0, 0), 'p1': (0, 1.5, 0)})
+    prong1 = primitive_call('cylinder', color=(0.6, 0.6, 0.6), shape_kwargs={'radius': 0.01, 'p0': (-0.1, 1.5, 0), 'p1': (-0.1, 1.8, 0)})
+    prong2 = primitive_call('cylinder', color=(0.6, 0.6, 0.6), shape_kwargs={'radius': 0.01, 'p0': (0, 1.5, 0), 'p1': (0, 1.8, 0)})
+    prong3 = primitive_call('cylinder', color=(0.6, 0.6, 0.6), shape_kwargs={'radius': 0.01, 'p0': (0.1, 1.5, 0), 'p1': (0.1, 1.8, 0)})
+    return concat_shapes(handle, prong1, prong2, prong3)
+
+@register()
+def wheat_stack() -> Shape:
+    def wheat_straw(height: float) -> Shape:
+        return primitive_call('cylinder', color=(0.9, 0.8, 0.2), shape_kwargs={'radius': 0.01, 'p0': (0, 0, 0), 'p1': (0, height, 0)})
+    
+    def loop_fn(i: int) -> Shape:
+        straw = wheat_straw(np.random.uniform(0.5, 0.8))
+        angle = np.random.uniform(0, 2*np.pi)
+        radius = np.random.uniform(0, 0.3)
+        x = radius * np.cos(angle)
+        z = radius * np.sin(angle)
+        return transform_shape(straw, translation_matrix((x, 0, z)))
+    
+    return loop(50, loop_fn)
+
+@register()
+def angelus_scene() -> Shape:
+    ground_shape = library_call('ground', width=10, length=10, height=0.1)
+    
+    man = library_call('person', height=1.8, color=(0.2, 0.2, 0.2))
+    man = transform_shape(man, translation_matrix((-0.5, 0.1, 0)))
+    
+    woman = library_call('person', height=1.6, color=(0.3, 0.3, 0.7))
+    woman = transform_shape(woman, translation_matrix((0.5, 0.1, 0)))
+    
+    basket_shape = library_call('basket')
+    basket_shape = transform_shape(basket_shape, translation_matrix((0, 0.1, 0.5)))
+    
+    pitchfork_shape = library_call('pitchfork')
+    pitchfork_shape = transform_shape(pitchfork_shape, translation_matrix((-0.7, 0.1, 0.2)))
+    pitchfork_shape = transform_shape(pitchfork_shape, rotation_matrix(np.pi/6, (0, 0, 1), (-0.7, 0.1, 0.2)))
+    
+    wheat_stack_shape = library_call('wheat_stack')
+    wheat_stack_shape = transform_shape(wheat_stack_shape, translation_matrix((0, 0.1, -1)))
+    
+    return concat_shapes(ground_shape, man, woman, basket_shape, pitchfork_shape, wheat_stack_shape)
+```
+
+This program creates a scene inspired by "The Angelus" by Jean-François Millet. It includes:
+
+1. A ground plane
+2. Two people (representing the man and woman in the painting)
+3. A basket
+4. A pitchfork
+5. A stack of wheat
+
+The scene is composed using various primitive shapes and transformations to create a simplified representation of the painting's key elements. The `angelus_scene` function combines all these elements to create the final scene.

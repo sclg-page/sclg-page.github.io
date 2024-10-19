@@ -1,0 +1,91 @@
+Here's a program to create a simplified representation of the Lincoln Memorial using the provided `helper.py`:
+
+```python
+from helper import *
+
+"""
+Lincoln Memorial
+"""
+
+@register()
+def column(height: float, radius: float) -> Shape:
+    return primitive_call('cylinder', color=(0.9, 0.9, 0.9), shape_kwargs={'radius': radius, 'p0': (0, 0, 0), 'p1': (0, height, 0)})
+
+@register()
+def colonnade(num_columns: int, column_height: float, column_radius: float, spacing: float) -> Shape:
+    def loop_fn(i: int) -> Shape:
+        offset = (i - (num_columns - 1) / 2) * spacing
+        return transform_shape(library_call('column', height=column_height, radius=column_radius),
+                               translation_matrix((offset, 0, 0)))
+    return loop(num_columns, loop_fn)
+
+@register()
+def roof(width: float, depth: float, height: float) -> Shape:
+    roof_shape = primitive_call('cube', color=(0.85, 0.85, 0.85), shape_kwargs={'scale': (width, height, depth)})
+    return transform_shape(roof_shape, translation_matrix((0, height/2, 0)))
+
+@register()
+def base(width: float, depth: float, height: float) -> Shape:
+    return primitive_call('cube', color=(0.8, 0.8, 0.8), shape_kwargs={'scale': (width, height, depth)})
+
+@register()
+def steps(width: float, depth: float, height: float, num_steps: int) -> Shape:
+    step_height = height / num_steps
+    step_depth = depth / num_steps
+    
+    def loop_fn(i: int) -> Shape:
+        step_width = width - i * (width / num_steps / 2)  # Steps get narrower as they go up
+        step = primitive_call('cube', color=(0.75, 0.75, 0.75),
+                              shape_kwargs={'scale': (step_width, step_height, step_depth)})
+        return transform_shape(step, translation_matrix((0, i * step_height, (num_steps - i - 1) * step_depth)))
+    
+    return loop(num_steps, loop_fn)
+
+@register()
+def statue() -> Shape:
+    body = primitive_call('cube', color=(0.7, 0.7, 0.7), shape_kwargs={'scale': (0.8, 1.5, 0.6)})
+    head = primitive_call('sphere', color=(0.7, 0.7, 0.7), shape_kwargs={'radius': 0.2})
+    head = transform_shape(head, translation_matrix((0, 0.95, 0)))
+    return concat_shapes(body, head)
+
+@register()
+def lincoln_memorial() -> Shape:
+    # Define dimensions
+    width, depth, height = 30, 20, 15
+    column_height, column_radius = 12, 0.8
+    num_columns = 8
+    base_height = 2
+    roof_height = 3
+    steps_height = 3
+    num_steps = 5
+    
+    # Create components
+    base_shape = library_call('base', width=width, depth=depth, height=base_height)
+    columns_front = library_call('colonnade', num_columns=num_columns, column_height=column_height,
+                                 column_radius=column_radius, spacing=(width-2)/(num_columns-1))
+    columns_back = transform_shape(columns_front, translation_matrix((0, 0, depth-2)))
+    roof_shape = library_call('roof', width=width+1, depth=depth+1, height=roof_height)
+    steps_shape = library_call('steps', width=width*1.2, depth=depth/3, height=steps_height, num_steps=num_steps)
+    statue_shape = library_call('statue')
+    
+    # Position components
+    columns_front = transform_shape(columns_front, translation_matrix((0, base_height, -depth/2+1)))
+    columns_back = transform_shape(columns_back, translation_matrix((0, base_height, -depth/2+1)))
+    roof_shape = transform_shape(roof_shape, translation_matrix((0, base_height+column_height, 0)))
+    steps_shape = transform_shape(steps_shape, translation_matrix((0, 0, depth/2)))
+    statue_shape = transform_shape(statue_shape, translation_matrix((0, base_height+1, 0)))
+    statue_shape = transform_shape(statue_shape, scale_matrix(3, (0, base_height+1, 0)))
+    
+    # Combine all components
+    return concat_shapes(base_shape, columns_front, columns_back, roof_shape, steps_shape, statue_shape)
+```
+
+This program creates a simplified representation of the Lincoln Memorial with the following components:
+
+1. A base
+2. Columns arranged in a colonnade at the front and back
+3. A roof
+4. Steps leading up to the memorial
+5. A simplified statue representing Abraham Lincoln
+
+The `lincoln_memorial()` function combines all these elements to create the final structure. The dimensions and number of components (like columns and steps) can be easily adjusted by modifying the parameters in the `lincoln_memorial()` function.

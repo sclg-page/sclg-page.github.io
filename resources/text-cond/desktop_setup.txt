@@ -1,0 +1,84 @@
+Here's a program that creates a scene with a monitor, keyboard, mouse, metal photo frame, and plant on a wooden desk top:
+
+```python
+from helper import *
+
+"""
+a monitor, a keyboard, a mouse, a metal photo frame, and a plant on a wooden desk top
+"""
+
+@register()
+def wooden_desk_top(width: float, depth: float, thickness: float) -> Shape:
+    return primitive_call('cube', color=(0.6, 0.4, 0.2), shape_kwargs={'scale': (width, thickness, depth)})
+
+@register()
+def monitor(width: float, height: float, depth: float) -> Shape:
+    screen = primitive_call('cube', color=(0.1, 0.1, 0.1), shape_kwargs={'scale': (width, height, depth/10)})
+    stand = primitive_call('cylinder', color=(0.7, 0.7, 0.7), shape_kwargs={'radius': width/10, 'p0': (0, -height/2, 0), 'p1': (0, -height/2 - height/4, 0)})
+    base = primitive_call('cube', color=(0.7, 0.7, 0.7), shape_kwargs={'scale': (width/3, height/20, depth/2)})
+    return concat_shapes(screen, stand, transform_shape(base, translation_matrix((0, -height/2 - height/4, 0))))
+
+@register()
+def keyboard(width: float, depth: float, height: float) -> Shape:
+    return primitive_call('cube', color=(0.2, 0.2, 0.2), shape_kwargs={'scale': (width, height, depth)})
+
+@register()
+def mouse(width: float, depth: float, height: float) -> Shape:
+    return primitive_call('cube', color=(0.3, 0.3, 0.3), shape_kwargs={'scale': (width, height, depth)})
+
+@register()
+def photo_frame(width: float, height: float, thickness: float) -> Shape:
+    frame = primitive_call('cube', color=(0.8, 0.8, 0.8), shape_kwargs={'scale': (width, height, thickness)})
+    photo = primitive_call('cube', color=(0.9, 0.9, 1.0), shape_kwargs={'scale': (width*0.9, height*0.9, thickness/2)})
+    return concat_shapes(frame, transform_shape(photo, translation_matrix((0, 0, thickness/4))))
+
+@register()
+def plant(pot_radius: float, pot_height: float, plant_height: float) -> Shape:
+    pot = primitive_call('cylinder', color=(0.6, 0.3, 0.1), shape_kwargs={'radius': pot_radius, 'p0': (0, 0, 0), 'p1': (0, pot_height, 0)})
+    
+    def leaf(i: int) -> Shape:
+        leaf_shape = primitive_call('sphere', color=(0.1, 0.7, 0.1), shape_kwargs={'radius': pot_radius/2})
+        angle = i * (2 * math.pi / 5)
+        distance = pot_radius * 0.8
+        height = pot_height + i * (plant_height / 5)
+        return transform_shape(leaf_shape, translation_matrix((distance * math.cos(angle), height, distance * math.sin(angle))))
+    
+    leaves = loop(5, leaf)
+    return concat_shapes(pot, leaves)
+
+@register()
+def desk_scene() -> Shape:
+    desk = library_call('wooden_desk_top', width=2.0, depth=1.0, thickness=0.05)
+    monitor = library_call('monitor', width=0.6, height=0.4, depth=0.1)
+    keyboard = library_call('keyboard', width=0.5, depth=0.2, height=0.02)
+    mouse = library_call('mouse', width=0.06, depth=0.1, height=0.03)
+    frame = library_call('photo_frame', width=0.2, height=0.25, thickness=0.02)
+    plant = library_call('plant', pot_radius=0.1, pot_height=0.15, plant_height=0.3)
+
+    desk_top = compute_shape_max(desk)[1]
+    monitor_bottom = compute_shape_min(monitor)[1]
+    keyboard_height = compute_shape_sizes(keyboard)[1]
+    mouse_height = compute_shape_sizes(mouse)[1]
+
+    monitor = transform_shape(monitor, translation_matrix((0, desk_top - monitor_bottom, -0.3)))
+    keyboard = transform_shape(keyboard, translation_matrix((0, desk_top + keyboard_height/2, 0)))
+    mouse = transform_shape(mouse, translation_matrix((0.3, desk_top + mouse_height/2, 0)))
+    frame = transform_shape(frame, translation_matrix((-0.6, desk_top, -0.3)))
+    frame = transform_shape(frame, rotation_matrix(math.pi/12, (0, 1, 0), compute_shape_center(frame)))
+    plant = transform_shape(plant, translation_matrix((0.7, desk_top, 0)))
+
+    return concat_shapes(desk, monitor, keyboard, mouse, frame, plant)
+```
+
+This program creates a scene with the following components:
+
+1. A wooden desk top
+2. A monitor with a screen, stand, and base
+3. A keyboard
+4. A mouse
+5. A metal photo frame
+6. A plant with a pot and leaves
+
+The `desk_scene()` function combines all these elements and positions them on the desk top. The monitor is placed at the back center of the desk, the keyboard is in front of it, and the mouse is to the right of the keyboard. The photo frame is placed on the left side of the desk, slightly tilted, and the plant is on the right side.
+
+You can call `library_call('desk_scene')` to generate the entire scene.

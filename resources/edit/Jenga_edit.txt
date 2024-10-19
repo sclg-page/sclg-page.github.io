@@ -1,0 +1,68 @@
+Here's the minimally edited program to remove 2 blocks from the second top layer of the Jenga tower:
+
+```python
+from helper import *
+
+"""
+Remove 2 blocks from second top layer and the tower should not fall
+"""
+
+@register()
+def jenga_block(color: tuple[float, float, float]) -> Shape:
+    """Create a single Jenga block"""
+    return primitive_call('cube', color=color, shape_kwargs={'scale': (0.75, 0.5, 2.25)})
+
+@register()
+def jenga_layer(is_horizontal: bool, y_offset: float, colors: list[tuple[float, float, float]], remove_blocks: list[int] = []) -> Shape:
+    """Create a layer of 3 Jenga blocks, optionally removing specified blocks"""
+    def block_fn(i: int) -> Shape:
+        if i in remove_blocks:
+            return []
+        block = library_call('jenga_block', color=colors[i])
+        if is_horizontal:
+            transform = translation_matrix((i * 0.75 - 0.75, y_offset, 0))
+        else:
+            transform = translation_matrix((0, y_offset, i * 0.75 - 0.75))
+            transform = transform @ rotation_matrix(math.pi/2, (0, 1, 0), (0, 0, 0))
+        return transform_shape(block, transform)
+
+    return loop(3, block_fn)
+
+@register()
+def jenga_tower() -> Shape:
+    """Create an 8-layer Jenga tower with 2 blocks removed from the second top layer"""
+    colors = [(0.8, 0.4, 0.3), (0.9, 0.7, 0.5), (0.6, 0.3, 0.1)]
+
+    def layer_fn(i: int) -> Shape:
+        is_horizontal = i % 2 == 0
+        y_offset = i * 0.5
+        layer_colors = [colors[i % 3], colors[(i+1) % 3], colors[(i+2) % 3]]
+        remove_blocks = [0, 2] if i == 6 else []  # Remove blocks 0 and 2 from the second top layer (index 6)
+        return library_call('jenga_layer', is_horizontal=is_horizontal, y_offset=y_offset, colors=layer_colors, remove_blocks=remove_blocks)
+
+    return loop(8, layer_fn)
+
+@register()
+def jenga_set() -> Shape:
+    """Create a complete Jenga set with 2 blocks removed from the second top layer"""
+    tower = library_call('jenga_tower')
+    base = primitive_call('cube', color=(0.4, 0.2, 0.1), shape_kwargs={'scale': (3, 0.1, 3)})
+
+    tower_min = compute_shape_min(tower)
+    base_max = compute_shape_max(base)
+
+    return concat_shapes(
+        base,
+        transform_shape(tower, translation_matrix((0, base_max[1] - tower_min[1], 0)))
+    )
+```
+
+This modified version of the program removes 2 blocks from the second top layer of the Jenga tower. Here are the changes made:
+
+1. The `jenga_layer` function now accepts an optional `remove_blocks` parameter, which is a list of block indices to remove from the layer.
+
+2. In the `jenga_tower` function, we modify the `layer_fn` to remove blocks 0 and 2 (the leftmost and rightmost blocks) from the second top layer (index 6, since we're counting from 0).
+
+3. The rest of the program remains the same, ensuring that the tower is still placed on the base and the overall structure is maintained.
+
+These changes will result in a Jenga tower with two blocks missing from the second top layer, while the rest of the tower remains intact. The tower should not fall because the top layer is still fully supported by the remaining block in the second top layer.

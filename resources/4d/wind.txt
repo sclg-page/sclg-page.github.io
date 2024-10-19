@@ -1,0 +1,64 @@
+Here's a program to create a toy wind turbine using the provided `helper.py`:
+
+```python
+from helper import *
+
+"""
+a toy wind turbine
+"""
+
+@register()
+def turbine_base() -> Shape:
+    base = primitive_call('cylinder', shape_kwargs={'radius': 0.2, 'p0': (0, 0, 0), 'p1': (0, 2, 0)}, color=(0.5, 0.5, 0.5))
+    return base
+
+@register()
+def turbine_nacelle() -> Shape:
+    nacelle = primitive_call('cube', shape_kwargs={'scale': (0.6, 0.4, 0.8)}, color=(0.7, 0.7, 0.7))
+    return transform_shape(nacelle, translation_matrix((0, 2.2, 0)))
+
+@register()
+def turbine_blade() -> Shape:
+    blade = primitive_call('cube', shape_kwargs={'scale': (0.1, 1.5, 0.05)}, color=(1, 1, 1))
+    return transform_shape(blade, translation_matrix((0, 0.75, 0)))
+
+@register()
+def turbine_rotor() -> Shape:
+    return loop(3, lambda i: transform_shape(
+        library_call('turbine_blade'),
+        rotation_matrix(i * 2 * math.pi / 3, (0, 0, 1), (0, 0, 0))
+    ))
+
+@register()
+def wind_turbine() -> Shape:
+    base = library_call('turbine_base')
+    nacelle = library_call('turbine_nacelle')
+    rotor = transform_shape(library_call('turbine_rotor'), translation_matrix((0, 2.2, 0.4)))
+    return concat_shapes(base, nacelle, rotor)
+
+@register_animation()
+def wind_turbine_animation() -> Generator[Shape, None, None]:
+    total_frames = 60
+
+    for frame in range(total_frames):
+        angle = frame * 2 * math.pi / total_frames
+        
+        base = library_call('turbine_base')
+        nacelle = library_call('turbine_nacelle')
+        rotor = transform_shape(
+            library_call('turbine_rotor'),
+            rotation_matrix(angle, (0, 0, 1), (0, 2.2, 0.4)) @ translation_matrix((0, 2.2, 0.4))
+        )
+        
+        yield concat_shapes(base, nacelle, rotor)
+```
+
+This program creates a toy wind turbine with the following components:
+
+1. `turbine_base`: A cylindrical base for the turbine.
+2. `turbine_nacelle`: A cuboid representing the nacelle (housing) at the top of the turbine.
+3. `turbine_blade`: A single blade of the turbine.
+4. `turbine_rotor`: Three blades arranged in a rotor configuration.
+5. `wind_turbine`: The complete wind turbine, combining all the components.
+
+The `wind_turbine_animation` function creates an animation of the turbine with rotating blades. It generates 60 frames, rotating the rotor by a full 360 degrees over the course of the animation.

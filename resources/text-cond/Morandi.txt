@@ -1,0 +1,67 @@
+Here's a program that creates a still life painting inspired by Giorgio Morandi's style, featuring simple geometric shapes arranged in a composition:
+
+```python
+from helper import *
+
+"""
+a still life painting from Giorgio Morandi
+"""
+
+@register()
+def bottle(height: float, radius: float, neck_ratio: float = 0.6) -> Shape:
+    body_height = height * 0.7
+    neck_height = height * 0.3
+    body = primitive_call('cylinder', color=(0.9, 0.9, 0.85), shape_kwargs={'radius': radius, 'p0': (0, 0, 0), 'p1': (0, body_height, 0)})
+    neck = primitive_call('cylinder', color=(0.9, 0.9, 0.85), shape_kwargs={'radius': radius * neck_ratio, 'p0': (0, body_height, 0), 'p1': (0, height, 0)})
+    return concat_shapes(body, neck)
+
+@register()
+def vase(height: float, radius: float, top_radius_ratio: float = 1.2) -> Shape:
+    base = primitive_call('cylinder', color=(0.85, 0.8, 0.75), shape_kwargs={'radius': radius, 'p0': (0, 0, 0), 'p1': (0, height * 0.9, 0)})
+    top = primitive_call('cylinder', color=(0.85, 0.8, 0.75), shape_kwargs={'radius': radius * top_radius_ratio, 'p0': (0, height * 0.9, 0), 'p1': (0, height, 0)})
+    return concat_shapes(base, top)
+
+@register()
+def bowl(radius: float, height: float) -> Shape:
+    return primitive_call('sphere', color=(0.8, 0.75, 0.7), shape_kwargs={'radius': radius})
+
+@register()
+def table(width: float, depth: float, height: float) -> Shape:
+    return primitive_call('cube', color=(0.7, 0.65, 0.6), shape_kwargs={'scale': (width, height, depth)})
+
+@register()
+def morandi_still_life() -> Shape:
+    table_shape = library_call('table', width=2.0, depth=1.5, height=0.05)
+    table_top = compute_shape_max(table_shape)[1]
+    
+    bottle1 = library_call('bottle', height=0.5, radius=0.08)
+    bottle2 = library_call('bottle', height=0.4, radius=0.06, neck_ratio=0.7)
+    vase1 = library_call('vase', height=0.3, radius=0.1)
+    bowl1 = library_call('bowl', radius=0.15, height=0.1)
+    
+    composition = concat_shapes(
+        table_shape,
+        transform_shape(bottle1, translation_matrix((0.3, table_top, 0.2))),
+        transform_shape(bottle2, translation_matrix((-0.2, table_top, 0.1))),
+        transform_shape(vase1, translation_matrix((0.1, table_top, -0.2))),
+        transform_shape(bowl1, translation_matrix((-0.3, table_top + 0.15, -0.1)))
+    )
+    
+    # Apply a slight rotation to the entire composition for a more dynamic view
+    composition_center = compute_shape_center(composition)
+    rotated_composition = transform_shape(composition, rotation_matrix(0.1, (0, 1, 0), composition_center))
+    
+    return rotated_composition
+```
+
+This program creates a still life composition inspired by Giorgio Morandi's paintings. Here's a breakdown of the components:
+
+1. `bottle`: Creates a simple bottle shape with a body and a neck.
+2. `vase`: Creates a vase shape with a wider top.
+3. `bowl`: Creates a simple bowl shape using a sphere.
+4. `table`: Creates a table surface for the objects.
+5. `morandi_still_life`: Arranges the objects on the table in a composition typical of Morandi's paintings.
+
+The composition features two bottles of different sizes, a vase, and a bowl arranged on a table. The objects are placed with slight offsets to create an interesting arrangement. Finally, a slight rotation is applied to the entire composition to give it a more dynamic view, similar to how Morandi would often paint his still lifes from a slightly angled perspective.
+
+The colors used are muted and earthy, reminiscent of Morandi's palette. The shapes are simple and geometric, focusing on the forms and their relationships to each other, which is characteristic of Morandi's style.

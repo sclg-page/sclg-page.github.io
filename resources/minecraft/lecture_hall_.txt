@@ -1,0 +1,105 @@
+Here's a program to create an interior scene of a university lecture hall using the provided `helper.py`:
+
+```python
+from helper import *
+
+"""
+an interior scene of a university lecture hall
+"""
+
+@register()
+def lecture_hall() -> Shape:
+    return concat_shapes(
+        library_call('floor'),
+        library_call('walls'),
+        library_call('ceiling'),
+        library_call('seating_area'),
+        library_call('podium'),
+        library_call('whiteboard')
+    )
+
+@register()
+def floor() -> Shape:
+    return primitive_call('set_cuboid', block_type='minecraft:smooth_stone', scale=(30, 1, 20), fill=True)
+
+@register()
+def walls() -> Shape:
+    return concat_shapes(
+        # Back wall
+        primitive_call('set_cuboid', block_type='minecraft:smooth_quartz', scale=(30, 15, 1), fill=True),
+        # Left wall
+        transform_shape(
+            primitive_call('set_cuboid', block_type='minecraft:smooth_quartz', scale=(1, 15, 20), fill=True),
+            translation_matrix([0, 0, 0])
+        ),
+        # Right wall
+        transform_shape(
+            primitive_call('set_cuboid', block_type='minecraft:smooth_quartz', scale=(1, 15, 20), fill=True),
+            translation_matrix([29, 0, 0])
+        )
+    )
+
+@register()
+def ceiling() -> Shape:
+    return transform_shape(
+        primitive_call('set_cuboid', block_type='minecraft:smooth_quartz', scale=(30, 1, 20), fill=True),
+        translation_matrix([0, 15, 0])
+    )
+
+@register()
+def seating_area() -> Shape:
+    def create_row(row: int) -> Shape:
+        return transform_shape(
+            concat_shapes(
+                primitive_call('set_cuboid', block_type='minecraft:oak_planks', scale=(28, 1, 2), fill=True),
+                transform_shape(
+                    primitive_call('set_cuboid', block_type='minecraft:oak_stairs', block_kwargs={'facing': 'north'}, scale=(28, 1, 1), fill=True),
+                    translation_matrix([0, 1, 1])
+                )
+            ),
+            translation_matrix([1, row, 2 + row * 3])
+        )
+    
+    return loop(5, create_row)
+
+@register()
+def podium() -> Shape:
+    return transform_shape(
+        concat_shapes(
+            primitive_call('set_cuboid', block_type='minecraft:oak_planks', scale=(6, 1, 4), fill=True),
+            transform_shape(
+                primitive_call('set_cuboid', block_type='minecraft:oak_fence', scale=(1, 3, 1), fill=True),
+                translation_matrix([2, 1, 1])
+            ),
+            transform_shape(
+                primitive_call('set_cuboid', block_type='minecraft:oak_slab', scale=(2, 1, 2), fill=True),
+                translation_matrix([2, 3, 1])
+            )
+        ),
+        translation_matrix([12, 1, 1])
+    )
+
+@register()
+def whiteboard() -> Shape:
+    return transform_shape(
+        concat_shapes(
+            primitive_call('set_cuboid', block_type='minecraft:white_concrete', scale=(20, 6, 1), fill=True),
+            transform_shape(
+                primitive_call('set_cuboid', block_type='minecraft:black_concrete', scale=(18, 4, 1), fill=True),
+                translation_matrix([1, 1, 0])
+            )
+        ),
+        translation_matrix([5, 5, 0])
+    )
+```
+
+This program creates a university lecture hall with the following components:
+
+1. A floor made of smooth stone.
+2. Walls made of smooth quartz.
+3. A ceiling made of smooth quartz.
+4. A seating area with five rows of oak wood seats and stairs.
+5. A podium made of oak wood planks, fences, and slabs.
+6. A whiteboard made of white concrete with a black concrete writing area.
+
+The lecture hall is 30 blocks wide, 20 blocks deep, and 15 blocks high. The seating area is arranged in a tiered fashion, with each row slightly higher than the one in front of it. The podium is placed at the front of the room, and the whiteboard is mounted on the back wall.

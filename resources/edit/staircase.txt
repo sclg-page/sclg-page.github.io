@@ -1,0 +1,63 @@
+Here's a program to create a simplified representation of the Bramante Staircase in the Vatican Museums:
+
+```python
+from helper import *
+
+"""
+Bramante Staircase, Vatican Museums
+"""
+
+@register()
+def stair_step(width: float, height: float, depth: float) -> Shape:
+    return primitive_call('cube', color=(0.8, 0.8, 0.8), shape_kwargs={'scale': (width, height, depth)})
+
+@register()
+def spiral_staircase(radius: float, height: float, num_steps: int) -> Shape:
+    def loop_fn(i: int) -> Shape:
+        angle = (i / num_steps) * 2 * math.pi
+        step_width = 0.8 * radius
+        step_height = height / num_steps
+        step_depth = 0.3 * radius
+        
+        step = library_call('stair_step', width=step_width, height=step_height, depth=step_depth)
+        
+        y_offset = i * step_height
+        x_offset = radius * math.cos(angle)
+        z_offset = radius * math.sin(angle)
+        
+        step = transform_shape(step, translation_matrix((x_offset, y_offset, z_offset)))
+        return transform_shape(step, rotation_matrix(angle, (0, 1, 0), (x_offset, y_offset, z_offset)))
+    
+    return loop(num_steps, loop_fn)
+
+@register()
+def central_column(radius: float, height: float) -> Shape:
+    return primitive_call('cylinder', color=(0.7, 0.7, 0.7), 
+                          shape_kwargs={'radius': radius, 'p0': (0, 0, 0), 'p1': (0, height, 0)})
+
+@register()
+def bramante_staircase() -> Shape:
+    staircase_radius = 5.0
+    staircase_height = 15.0
+    num_steps = 60
+    column_radius = 0.5
+    
+    stairs = library_call('spiral_staircase', radius=staircase_radius, height=staircase_height, num_steps=num_steps)
+    column = library_call('central_column', radius=column_radius, height=staircase_height)
+    
+    return concat_shapes(stairs, column)
+```
+
+This program creates a simplified representation of the Bramante Staircase. Here's a breakdown of the functions:
+
+1. `stair_step`: Creates a single step of the staircase using a cube primitive.
+
+2. `spiral_staircase`: Generates the spiral staircase by creating and positioning multiple steps in a helical pattern. It uses a loop to create each step, calculating its position and rotation based on the current angle and height.
+
+3. `central_column`: Creates the central column of the staircase using a cylinder primitive.
+
+4. `bramante_staircase`: Combines the spiral staircase and the central column to create the complete Bramante Staircase structure.
+
+The staircase is created with a radius of 5 units, a height of 15 units, and 60 steps, which should give a good approximation of the helical structure. The central column has a radius of 0.5 units.
+
+This simplified model captures the essence of the Bramante Staircase: a double helix spiral staircase with a central column. The actual staircase is more complex, with ornate details and architectural features that are beyond the scope of this simple geometric representation.

@@ -1,0 +1,67 @@
+Here's a program to create an 8-layer 3-color Jenga set at game start:
+
+```python
+from helper import *
+
+"""
+a 8-layer 3-color Jenga set at game start
+"""
+
+@register()
+def jenga_block(color: tuple[float, float, float]) -> Shape:
+    """Create a single Jenga block"""
+    return primitive_call('cube', color=color, shape_kwargs={'scale': (0.75, 0.5, 2.25)})
+
+@register()
+def jenga_layer(is_horizontal: bool, y_offset: float, colors: list[tuple[float, float, float]]) -> Shape:
+    """Create a layer of 3 Jenga blocks"""
+    def block_fn(i: int) -> Shape:
+        block = library_call('jenga_block', color=colors[i])
+        if is_horizontal:
+            transform = translation_matrix((i * 0.75 - 0.75, y_offset, 0))
+        else:
+            transform = translation_matrix((0, y_offset, i * 0.75 - 0.75))
+            transform = transform @ rotation_matrix(math.pi/2, (0, 1, 0), (0, 0, 0))
+        return transform_shape(block, transform)
+    
+    return loop(3, block_fn)
+
+@register()
+def jenga_tower() -> Shape:
+    """Create an 8-layer Jenga tower"""
+    colors = [(0.8, 0.4, 0.3), (0.9, 0.7, 0.5), (0.6, 0.3, 0.1)]
+    
+    def layer_fn(i: int) -> Shape:
+        is_horizontal = i % 2 == 0
+        y_offset = i * 0.5
+        layer_colors = [colors[i % 3], colors[(i+1) % 3], colors[(i+2) % 3]]
+        return library_call('jenga_layer', is_horizontal=is_horizontal, y_offset=y_offset, colors=layer_colors)
+    
+    return loop(8, layer_fn)
+
+@register()
+def jenga_set() -> Shape:
+    """Create a complete Jenga set at game start"""
+    tower = library_call('jenga_tower')
+    base = primitive_call('cube', color=(0.4, 0.2, 0.1), shape_kwargs={'scale': (3, 0.1, 3)})
+    
+    tower_min = compute_shape_min(tower)
+    base_max = compute_shape_max(base)
+    
+    return concat_shapes(
+        base,
+        transform_shape(tower, translation_matrix((0, base_max[1] - tower_min[1], 0)))
+    )
+```
+
+This program creates a realistic 8-layer 3-color Jenga set at game start. Here's a breakdown of the functions:
+
+1. `jenga_block`: Creates a single Jenga block with the given color.
+
+2. `jenga_layer`: Creates a layer of 3 Jenga blocks, either horizontal or vertical, with specified colors.
+
+3. `jenga_tower`: Builds the 8-layer Jenga tower, alternating between horizontal and vertical layers, and cycling through the three colors.
+
+4. `jenga_set`: Creates the complete Jenga set by combining the tower with a base.
+
+The tower is built from bottom to top, with each layer consisting of three blocks. The colors alternate in a pattern to create a visually appealing 3-color set. The entire tower is then placed on a flat base to complete the set.

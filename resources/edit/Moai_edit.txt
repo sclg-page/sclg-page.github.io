@@ -1,0 +1,83 @@
+Here's the modified program with minimal edits to make every two statues face each other:
+
+```python
+from helper import *
+
+"""
+Make every two statues face to each other
+"""
+
+@register()
+def moai_head(scale: float) -> Shape:
+    head = primitive_call('cube', color=(0.5, 0.5, 0.5), shape_kwargs={'scale': (scale, scale*1.5, scale*0.8)})
+    nose = primitive_call('cube', color=(0.45, 0.45, 0.45), shape_kwargs={'scale': (scale*0.2, scale*0.4, scale*0.3)})
+    nose = transform_shape(nose, translation_matrix((0, -scale*0.2, scale*0.4)))
+    return concat_shapes(head, nose)
+
+@register()
+def moai_body(scale: float) -> Shape:
+    body = primitive_call('cube', color=(0.55, 0.55, 0.55), shape_kwargs={'scale': (scale*0.8, scale*2, scale*0.6)})
+    return body
+
+@register()
+def moai(scale: float) -> Shape:
+    head = library_call('moai_head', scale=scale)
+    body = library_call('moai_body', scale=scale)
+
+    head_min = compute_shape_min(head)
+    body_max = compute_shape_max(body)
+
+    head = transform_shape(head, translation_matrix((0, body_max[1] - head_min[1], 0)))
+
+    return concat_shapes(body, head)
+
+@register()
+def ahu_platform(width: float, height: float, depth: float) -> Shape:
+    platform = primitive_call('cube', color=(0.3, 0.3, 0.3), shape_kwargs={'scale': (width, height, depth)})
+    return platform
+
+@register()
+def moai_with_variation(base_scale: float) -> Shape:
+    scale_variation = np.random.uniform(0.9, 1.1)
+    rotation_variation = np.random.uniform(-0.05, 0.05)
+
+    moai_statue = library_call('moai', scale=base_scale * scale_variation)
+    moai_center = compute_shape_center(moai_statue)
+
+    return transform_shape(moai_statue, rotation_matrix(rotation_variation, (0, 1, 0), moai_center))
+
+@register()
+def ahu_akivi_scene() -> Shape:
+    platform = library_call('ahu_platform', width=14, height=1, depth=4)
+    platform_top = compute_shape_max(platform)[1]
+
+    def create_moai(i: int) -> Shape:
+        moai = library_call('moai_with_variation', base_scale=1.5)
+        moai_bottom = compute_shape_min(moai)[1]
+        x_position = (i - 3) * 2  # Distribute 7 Moai evenly
+        
+        # Rotate every two statues to face each other
+        rotation_angle = math.pi / 2 if i % 2 == 0 else -math.pi / 2
+        rotated_moai = transform_shape(moai, rotation_matrix(rotation_angle, (0, 1, 0), (0, 0, 0)))
+        
+        return transform_shape(rotated_moai, translation_matrix((x_position, platform_top - moai_bottom, 0)))
+
+    moai_statues = loop(7, create_moai)
+
+    return concat_shapes(platform, moai_statues)
+```
+
+In this modified version, I made a minimal edit to the `create_moai` function inside `ahu_akivi_scene`. The changes are as follows:
+
+1. I added a rotation to make every two statues face each other:
+   ```python
+   rotation_angle = math.pi / 2 if i % 2 == 0 else -math.pi / 2
+   rotated_moai = transform_shape(moai, rotation_matrix(rotation_angle, (0, 1, 0), (0, 0, 0)))
+   ```
+
+2. I then applied this rotation before translating the Moai to its position:
+   ```python
+   return transform_shape(rotated_moai, translation_matrix((x_position, platform_top - moai_bottom, 0)))
+   ```
+
+These changes will make every two statues face each other. The even-indexed statues (0, 2, 4, 6) will be rotated 90 degrees clockwise, while the odd-indexed statues (1, 3, 5) will be rotated 90 degrees counterclockwise. This creates the effect of pairs of statues facing each other along the platform.

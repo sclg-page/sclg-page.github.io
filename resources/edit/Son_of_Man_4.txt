@@ -1,0 +1,72 @@
+Here's a program to create a representation of René Magritte's "The Son of Man" painting using the provided DSL:
+
+```python
+from helper import *
+
+"""
+René Magritte The Son of Man
+"""
+
+@register()
+def suit(width: float, height: float, depth: float) -> Shape:
+    return primitive_call('cube', color=(0.1, 0.1, 0.1), shape_kwargs={'scale': (width, height, depth)})
+
+@register()
+def head(radius: float) -> Shape:
+    return primitive_call('sphere', color=(0.9, 0.75, 0.65), shape_kwargs={'radius': radius})
+
+@register()
+def apple(radius: float) -> Shape:
+    return primitive_call('sphere', color=(0.8, 0.1, 0.1), shape_kwargs={'radius': radius})
+
+@register()
+def hat(radius: float, height: float) -> Shape:
+    brim = primitive_call('cylinder', color=(0.1, 0.1, 0.1), shape_kwargs={'radius': radius * 1.2, 'p0': (0, 0, 0), 'p1': (0, height * 0.1, 0)})
+    top = primitive_call('cylinder', color=(0.1, 0.1, 0.1), shape_kwargs={'radius': radius, 'p0': (0, height * 0.1, 0), 'p1': (0, height, 0)})
+    return concat_shapes(brim, top)
+
+@register()
+def son_of_man() -> Shape:
+    # Create the suit
+    suit_shape = library_call('suit', width=0.6, height=1.0, depth=0.3)
+    
+    # Create the head
+    head_shape = library_call('head', radius=0.15)
+    head_shape = transform_shape(head_shape, translation_matrix((0, 0.6, 0)))
+    
+    # Create the apple
+    apple_shape = library_call('apple', radius=0.08)
+    apple_shape = transform_shape(apple_shape, translation_matrix((0, 0.62, 0.15)))
+    
+    # Create the hat
+    hat_shape = library_call('hat', radius=0.12, height=0.15)
+    hat_shape = transform_shape(hat_shape, translation_matrix((0, 0.78, 0)))
+    
+    # Combine all shapes
+    figure = concat_shapes(suit_shape, head_shape, apple_shape, hat_shape)
+    
+    # Add a slight tilt to the figure
+    figure_center = compute_shape_center(figure)
+    tilted_figure = transform_shape(figure, rotation_matrix(0.1, (1, 0, 0), figure_center))
+    
+    return tilted_figure
+
+```
+
+This program creates a simplified 3D representation of René Magritte's "The Son of Man" painting. Here's a breakdown of the components:
+
+1. `suit()`: Creates a black rectangular prism to represent the suit.
+2. `head()`: Creates a flesh-colored sphere for the head.
+3. `apple()`: Creates a red sphere for the apple.
+4. `hat()`: Creates a black bowler hat using two cylinders (one for the brim and one for the top).
+5. `son_of_man()`: Assembles all the components, positioning them relative to each other, and applies a slight tilt to the entire figure.
+
+The figure is constructed from bottom to top:
+- The suit forms the base of the figure.
+- The head is positioned above the suit.
+- The apple is placed in front of the face, slightly above the center of the head.
+- The hat is positioned on top of the head.
+
+Finally, a slight rotation is applied to the entire figure to give it a subtle tilt, reminiscent of the painting's composition.
+
+This representation captures the key elements of Magritte's painting: a man in a suit with a bowler hat, and an apple obscuring his face. While it's a simplified 3D version, it conveys the essence of the surrealist artwork.
