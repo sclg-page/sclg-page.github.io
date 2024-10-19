@@ -39,10 +39,10 @@
                     <a href="#image-cond" class="nav__link">Image-to-3D</a>
                 </li>
                 <li>
-                    <a href="#baselines" class="nav__link">Baselines</a>
+                    <a href="#pipeline" class="nav__link">Pipeline</a>
                 </li>
                 <li>
-                    <a href="#pipeline" class="nav__link">Pipeline</a>
+                    <a href="#baselines" class="nav__link">Evaluation</a>
                 </li>
             </ul>
             <i class="nav__close nav__icon nav__close_icon" id="nav-close"></i>
@@ -396,27 +396,64 @@ while explicitly modeling the scene structures to enable precise control and edi
                 <button class="toggle-btn" onclick="toggleText(this, 'resources/image-cond/image-glasss_.txt')">Show Response</button>
                 <div class="text-content"></div>
             </div>
-<!--            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">-->
-<!--                <div class="image-wrapper">-->
-<!--                    <img src="resources/image-cond/image-6cokes_.png" alt="input">-->
-<!--                    <p class="caption">Input image</p>-->
-<!--                </div>-->
-<!--                <div>-->
-<!--                    <video controls loop muted autoplay src="resources/image-cond/image-6cokes_-mi.mp4#t=0.001" type="video/mp4"></video>-->
-<!--                </div>-->
-<!--                <div>-->
-<!--                    <video controls loop muted autoplay src="resources/image-cond/image-6cokes_.mp4#t=0.001" type="video/mp4"></video>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div class="video-row">-->
-<!--                <button class="toggle-btn" onclick="toggleText(this, 'resources/image-cond/image-6cokes_.txt')">Show Response</button>-->
-<!--                <div class="text-content"></div>-->
-<!--            </div>-->
+           <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+               <div>
+                   <img src="resources/image-cond/image-6cokes_.png" alt="input">
+                   <p class="caption">Input image</p>
+               </div>
+               <div>
+                   <video controls loop muted autoplay src="resources/image-cond/image-6cokes_-mi.mp4#t=0.001" type="video/mp4"></video>
+               </div>
+               <div>
+                   <video controls loop muted autoplay src="resources/image-cond/image-6cokes_.mp4#t=0.001" type="video/mp4"></video>
+               </div>
+           </div>
+           <div class="video-row">
+               <button class="toggle-btn" onclick="toggleText(this, 'resources/image-cond/image-6cokes_.txt')">Show Response</button>
+               <div class="text-content"></div>
+           </div>
+        </div>
+    </section>
+    <a class="anchor" id="pipeline"></a>
+    <section class="section container">
+        <div class="paper__section-title">Pipeline</div>
+        <div class="example-container">
+            <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
+                <div>
+                    <img src="resources/pipeline.png" alt="input">
+                </div>
+            </div>
+            <div class="paper__section-paragraph">
+                <p>
+                    In the representation, a program consists of a set of semantic-aware functions identified by words.
+                    A function maps embeddings to entities in the scene.
+<!--                    In the representation, a program consists of a set of entity functions, each defining a class of entities-->
+<!--                    and is associated with a word summarizing the semantic meaning of the defined class.-->
+<!--                    Each function receives input neural embeddings that specify attributes and identity of a specific entity from the class,-->
+<!--                    transforms and composes multiple sub-entities in the function body, and computes an entity output.-->
+<!--                    <br>-->
+                    To automatically <b>infer</b> the representation from text or image inputs, we convert the Scene Language grammar into Python and
+                    prompt Claude 3.5 Sonnet <a href="#ref1">[1]</a> to generate the non-neural components.
+                    Neural embeddings reside in the CLIP text embedding space <a href="#ref2">[2,3]</a>
+                    and are obtained from texts via the CLIP text encoder or inverted from images with a pre-trained text-to-image model <a href="#ref4">[4,5]</a>.
+                    Afterward, a program interpreter <b>executes</b> the program and computes a data object for the scene,
+                    and a graphics renderer <b>renders</b> the data object into an image.
+                </p>
+            </div>
         </div>
     </section>
     <a class="anchor" id="baselines"></a>
     <section class="section container">
-        <div class="paper__section-title">Baselines</div>
+        <div class="paper__section-title">Evaluation</div>
+        <div class="paper__section-paragraph">
+            <p>
+                We evaluate our method on text-conditioned 3D generation tasks via a user study across 9 scenes shown below.
+                We compare with two baseline methods: GraphDreamer <a href="#ref6">[6]</a>, which uses scene graphs for intermediate representation,
+                and MVDream <a href="#ref7">[7]</a>, which directly generates scenes from text inputs.
+                Input text prompts are show below output renderings.
+                Our method achieves more favorable prompt alignment than the baselines and has a clear advantage in counting accuracy.
+            </p>
+        </div>
         <div class="example-container">
             <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
                 <div>
@@ -469,36 +506,108 @@ while explicitly modeling the scene structures to enable precise control and edi
                 </div>
             </div>
             <div><p class="caption">7 different sized Russian nesting dolls lined up</p></div>
-<!--                            <div class="text-center">7 different sized Russian nesting dolls lined up</div>-->
-<!--                            <img src='resources/user_study/0006.gif'>-->
-
-        </div>
-    </section>
-    <a class="anchor" id="pipeline"></a>
-    <section class="section container">
-        <div class="paper__section-title">Pipeline</div>
-        <div class="example-container">
             <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
                 <div>
-                    <img src="resources/pipeline.png" alt="input">
+                    <img src='resources/user_study/0002.gif'>
                 </div>
             </div>
-
-            <div class="paper__section-paragraph">
-                <p>
-<!--                    In the representation, a program consists of a set of entity functions, each defining a class of entities-->
-<!--                    and is associated with a word summarizing the semantic meaning of the defined class.-->
-<!--                    Each function receives input neural embeddings that specify attributes and identity of a specific entity from the class,-->
-<!--                    transforms and composes multiple sub-entities in the function body, and computes an entity output.-->
-<!--                    <br>-->
-                    To automatically <b>infer</b> the representation from text or image inputs, we convert the Scene Language grammar into Python and
-                    prompt Claude 3.5 Sonnet <a href="#ref1">[1]</a> to generate the non-neural components.
-                    Neural embeddings reside in the CLIP text embedding space <a href="#ref2">[2,3]</a>
-                    and are obtained from texts via the CLIP text encoder or inverted from images with a pre-trained text-to-image model <a href="#ref4">[4,5]</a>.
-                    A program interpreter <b>executes</b> the program and computes a data object for the scene.
-                    Afterward, a graphics renderer <b>renders</b> the data object into an image.
-                </p>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+                <div>
+                    <p class="subcaption">MVDream</p>
+                </div>
+                <div>
+                    <p class="subcaption">GraphDreamer</p>
+                </div>
+                <div>
+                    <p class="subcaption">Ours</p>
+                </div>
             </div>
+            <div><p class="caption">A nursery with 7x7 of potted plants</p></div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
+                <div>
+                    <img src='resources/user_study/0003.gif'>
+                </div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+                <div>
+                    <p class="subcaption">MVDream</p>
+                </div>
+                <div>
+                    <p class="subcaption">GraphDreamer</p>
+                </div>
+                <div>
+                    <p class="subcaption">Ours</p>
+                </div>
+            </div>
+            <div><p class="caption">A room with four desks, each with one computer monitor on it</p></div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
+                <div>
+                    <img src='resources/user_study/0004.gif'>
+                </div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+                <div>
+                    <p class="subcaption">MVDream</p>
+                </div>
+                <div>
+                    <p class="subcaption">GraphDreamer</p>
+                </div>
+                <div>
+                    <p class="subcaption">Ours</p>
+                </div>
+            </div>
+            <div><p class="caption">6 bottles of water arranged in a circle around a small potted plant</p></div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
+                <div>
+                    <img src='resources/user_study/0005.gif'>
+                </div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+                <div>
+                    <p class="subcaption">MVDream</p>
+                </div>
+                <div>
+                    <p class="subcaption">GraphDreamer</p>
+                </div>
+                <div>
+                    <p class="subcaption">Ours</p>
+                </div>
+            </div>
+            <div><p class="caption">A 8-layer 3-color Jenga set at game start</p></div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
+                <div>
+                    <img src='resources/user_study/0000.gif'>
+                </div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+                <div>
+                    <p class="subcaption">MVDream</p>
+                </div>
+                <div>
+                    <p class="subcaption">GraphDreamer</p>
+                </div>
+                <div>
+                    <p class="subcaption">Ours</p>
+                </div>
+            </div>
+            <div><p class="caption">15 coke cans stacking in a pyramid</p></div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(1, 1fr)">
+                <div>
+                    <img src='resources/user_study/0008.gif'>
+                </div>
+            </div>
+            <div class="paper__section-grid" style="grid-template-columns: repeat(3, 1fr)">
+                <div>
+                    <p class="subcaption">MVDream</p>
+                </div>
+                <div>
+                    <p class="subcaption">GraphDreamer</p>
+                </div>
+                <div>
+                    <p class="subcaption">Ours</p>
+                </div>
+            </div>
+            <div><p class="caption">Three cokes in a close circle</p></div>
         </div>
     </section>
     <section class="section container">
@@ -511,6 +620,8 @@ while explicitly modeling the scene structures to enable precise control and edi
                     <li id="ref3">Radford, A., Kim, J. W., Hallacy, C., Ramesh, A., Goh, G., Agarwal, S., ... & Sutskever, I. (2021). Learning transferable visual models from natural language supervision.</li>
                     <li id="ref4">Rombach, R., Blattmann, A., Lorenz, D., Esser, P., & Ommer, B. (2021). High-resolution image synthesis with latent diffusion models. </li>
                     <li id="ref5">Gal, R., Alaluf, Y., Atzmon, Y., Patashnik, O., Bermano, A. H., Chechik, G., & Cohen-Or, D. (2022). An image is worth one word: Personalizing text-to-image generation using textual inversion. </li>
+                    <li id="ref6">Gao, G., Liu, W., Chen, A., Geiger, A., & Schölkopf, B. (2024). GraphDreamer: Compositional 3D scene synthesis from scene graphs. </li>
+                    <li id="ref7">Shi, Y., Wang, P., Ye, J., Long, M., Li, K., & Yang, X. (2023). MVDream: Multi-view diffusion for 3D generation. </li>
                 </ol>
             </div>
         </div>
