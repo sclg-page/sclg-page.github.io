@@ -51,8 +51,18 @@
     object-fit: contain;
 }
 
-/*.image-wrapper img {*/
-/*    max-width: 100%;*/
-/*    !*max-height: calc(100% - 30px); !* Leaving space for caption *!*!*/
-/*    object-fit: contain;*/
-/*}*/
+:root {
+    --prog-color: rgb(233,113,50);
+    --word-color: rgb(21,96,130);
+    --embd-color: rgb(160,43,147);
+}
+.abstract-content a {
+    color: inherit;
+    /*color: #0366d6;                !* GitHub blue *!*/
+    /*color: #444444;*/
+    text-decoration: underline;
+}
+
+.abstract-content a:hover {
+    text-decoration: underline;
+}
