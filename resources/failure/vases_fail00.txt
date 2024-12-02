@@ -1,0 +1,89 @@
+```python
+from helper import *
+
+"""
+Reconstruct the input scene with vases and decorative objects
+"""
+
+@register()
+def sphere(radius: float, color: tuple[float, float, float]) -> Shape:
+    return primitive_call('sphere', shape_kwargs={'radius': radius}, color=color)
+
+@register()
+def cylinder(radius: float, height: float, color: tuple[float, float, float]) -> Shape:
+    return primitive_call('cylinder', shape_kwargs={'radius': radius, 'p0': (0, 0, 0), 'p1': (0, height, 0)}, color=color)
+
+@register()
+def vase_base(radius: float, height: float, color: tuple[float, float, float]) -> Shape:
+    return library_call('cylinder', radius=radius, height=height, color=color)
+
+@register()
+def vase_neck(radius: float, height: float, color: tuple[float, float, float]) -> Shape:
+    return library_call('cylinder', radius=radius, height=height, color=color)
+
+@register()
+def yellow_vase() -> Shape:
+    base = library_call('vase_base', radius=0.15, height=0.3, color=(1, 0.8, 0))
+    neck = library_call('vase_neck', radius=0.05, height=0.1, color=(1, 0.8, 0))
+    neck_transform = translation_matrix((0, 0.3, 0))
+    return concat_shapes(base, transform_shape(neck, neck_transform))
+
+@register()
+def pink_vase() -> Shape:
+    base = library_call('vase_base', radius=0.08, height=0.5, color=(1, 0.6, 0.8))
+    neck = library_call('vase_neck', radius=0.06, height=0.1, color=(1, 0.6, 0.8))
+    neck_transform = translation_matrix((0, 0.5, 0))
+    return concat_shapes(base, transform_shape(neck, neck_transform))
+
+@register()
+def purple_vase() -> Shape:
+    base = library_call('vase_base', radius=0.12, height=0.3, color=(0.8, 0.4, 0.8))
+    neck = library_call('vase_neck', radius=0.08, height=0.2, color=(0.8, 0.4, 0.8))
+    neck_transform = translation_matrix((0, 0.3, 0))
+    return concat_shapes(base, transform_shape(neck, neck_transform))
+
+@register()
+def round_container() -> Shape:
+    bottom = library_call('sphere', radius=0.15, color=(1, 0.7, 0.6))
+    top = library_call('sphere', radius=0.15, color=(1, 0.7, 0.6))
+    bottom_transform = scale_matrix(0.5, (0, 0, 0))
+    top_transform = scale_matrix(0.5, (0, 0, 0)) @ translation_matrix((0, 0.15, 0))
+    return concat_shapes(
+        transform_shape(bottom, bottom_transform),
+        transform_shape(top, top_transform)
+    )
+
+@register()
+def small_sphere() -> Shape:
+    return library_call('sphere', radius=0.05, color=(1, 0.9, 0.7))
+
+@register()
+def table() -> Shape:
+    return primitive_call('cube', shape_kwargs={'scale': (2, 0.05, 1)}, color=(0.6, 0.4, 0.2))
+
+@register()
+def scene() -> Shape:
+    table_top = library_call('table')
+    yellow_vase_obj = library_call('yellow_vase')
+    pink_vase_obj = library_call('pink_vase')
+    purple_vase_obj = library_call('purple_vase')
+    round_container_obj = library_call('round_container')
+    small_sphere_obj = library_call('small_sphere')
+
+    _, table_height, _ = compute_shape_max(table_top)
+    
+    yellow_vase_transform = translation_matrix((-0.3, table_height, 0))
+    pink_vase_transform = translation_matrix((0, table_height, 0))
+    purple_vase_transform = translation_matrix((0.3, table_height, 0))
+    round_container_transform = translation_matrix((-0.6, table_height, 0))
+    small_sphere_transform = translation_matrix((0.6, table_height, 0))
+
+    return concat_shapes(
+        table_top,
+        transform_shape(yellow_vase_obj, yellow_vase_transform),
+        transform_shape(pink_vase_obj, pink_vase_transform),
+        transform_shape(purple_vase_obj, purple_vase_transform),
+        transform_shape(round_container_obj, round_container_transform),
+        transform_shape(small_sphere_obj, small_sphere_transform)
+    )
+```

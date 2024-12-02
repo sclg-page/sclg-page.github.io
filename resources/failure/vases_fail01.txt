@@ -1,0 +1,89 @@
+```python
+from helper import *
+
+"""
+Reconstruct the input scene with vases and decorative objects
+"""
+
+@register()
+def sphere(radius: float, color: tuple[float, float, float]) -> Shape:
+    return primitive_call('sphere', shape_kwargs={'radius': radius}, color=color)
+
+@register()
+def cylinder(radius: float, height: float, color: tuple[float, float, float]) -> Shape:
+    return primitive_call('cylinder', shape_kwargs={'radius': radius, 'p0': (0, 0, 0), 'p1': (0, height, 0)}, color=color)
+
+@register()
+def round_vase(base_radius: float, neck_radius: float, height: float, color: tuple[float, float, float]) -> Shape:
+    base = library_call('sphere', radius=base_radius, color=color)
+    neck = library_call('cylinder', radius=neck_radius, height=height, color=color)
+    return concat_shapes(
+        base,
+        transform_shape(neck, translation_matrix((0, base_radius, 0)))
+    )
+
+@register()
+def bottle_vase(base_radius: float, neck_radius: float, height: float, color: tuple[float, float, float]) -> Shape:
+    base = library_call('cylinder', radius=base_radius, height=height*0.7, color=color)
+    neck = library_call('cylinder', radius=neck_radius, height=height*0.3, color=color)
+    return concat_shapes(
+        base,
+        transform_shape(neck, translation_matrix((0, height*0.7, 0)))
+    )
+
+@register()
+def curvy_vase(base_radius: float, mid_radius: float, neck_radius: float, height: float, color: tuple[float, float, float]) -> Shape:
+    base = library_call('cylinder', radius=base_radius, height=height*0.3, color=color)
+    mid = library_call('sphere', radius=mid_radius, color=color)
+    neck = library_call('cylinder', radius=neck_radius, height=height*0.4, color=color)
+    return concat_shapes(
+        base,
+        transform_shape(mid, translation_matrix((0, height*0.3, 0))),
+        transform_shape(neck, translation_matrix((0, height*0.6, 0)))
+    )
+
+@register()
+def leaf(size: float, color: tuple[float, float, float]) -> Shape:
+    leaf_shape = library_call('sphere', radius=size/2, color=color)
+    return transform_shape(leaf_shape, scale_matrix(0.2, (0, 0, 0)))
+
+@register()
+def flower(size: float, color: tuple[float, float, float]) -> Shape:
+    petal = library_call('leaf', size=size, color=color)
+    flower = concat_shapes(
+        petal,
+        transform_shape(petal, rotation_matrix(math.pi/2, (0, 1, 0), (0, 0, 0))),
+        transform_shape(petal, rotation_matrix(math.pi, (0, 1, 0), (0, 0, 0))),
+        transform_shape(petal, rotation_matrix(3*math.pi/2, (0, 1, 0), (0, 0, 0)))
+    )
+    return transform_shape(flower, scale_matrix(1.5, (0, 0, 0)))
+
+@register()
+def scene() -> Shape:
+    table = primitive_call('cube', shape_kwargs={'scale': (2, 0.05, 1)}, color=(0.6, 0.4, 0.2))
+    
+    round_vase_shape = library_call('round_vase', base_radius=0.15, neck_radius=0.05, height=0.3, color=(0.8, 0.6, 0.5))
+    yellow_vase = library_call('bottle_vase', base_radius=0.12, neck_radius=0.06, height=0.4, color=(1, 0.8, 0))
+    pink_vase = library_call('curvy_vase', base_radius=0.08, mid_radius=0.12, neck_radius=0.06, height=0.5, color=(0.9, 0.5, 0.7))
+    purple_vase = library_call('bottle_vase', base_radius=0.1, neck_radius=0.05, height=0.35, color=(0.6, 0.3, 0.6))
+    
+    small_sphere = library_call('sphere', radius=0.05, color=(0.9, 0.9, 0.7))
+    
+    lotus_pod = library_call('sphere', radius=0.1, color=(0.5, 0.5, 0.3))
+    lotus_pod = transform_shape(lotus_pod, scale_matrix(0.8, (0, 0, 0)))
+    
+    anthurium = library_call('flower', size=0.2, color=(0.9, 0.5, 0.5))
+    
+    scene = concat_shapes(
+        table,
+        transform_shape(round_vase_shape, translation_matrix((-0.7, 0.025, 0))),
+        transform_shape(yellow_vase, translation_matrix((-0.3, 0.025, 0))),
+        transform_shape(pink_vase, translation_matrix((0.2, 0.025, 0))),
+        transform_shape(purple_vase, translation_matrix((0.6, 0.025, 0))),
+        transform_shape(small_sphere, translation_matrix((0, 0.025, 0.2))),
+        transform_shape(lotus_pod, translation_matrix((-0.3, 0.425, 0))),
+        transform_shape(anthurium, translation_matrix((0.6, 0.375, 0)))
+    )
+    
+    return scene
+```

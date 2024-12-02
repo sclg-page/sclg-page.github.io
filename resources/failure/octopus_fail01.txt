@@ -1,0 +1,82 @@
+Here's a program to create an octopus puppet using the provided `helper.py`:
+
+```python
+from helper import *
+
+"""
+Octopus puppet
+"""
+
+@register()
+def octopus_head(radius: float) -> Shape:
+    return primitive_call('sphere', color=(0.5, 0.2, 0.5), shape_kwargs={'radius': radius})
+
+@register()
+def octopus_eye(radius: float) -> Shape:
+    eye_white = primitive_call('sphere', color=(1.0, 1.0, 1.0), shape_kwargs={'radius': radius})
+    eye_pupil = primitive_call('sphere', color=(0.0, 0.0, 0.0), shape_kwargs={'radius': radius * 0.5})
+    return concat_shapes(
+        eye_white,
+        transform_shape(eye_pupil, translation_matrix((0, 0, radius * 0.5)))
+    )
+
+@register()
+def octopus_tentacle(length: float, radius: float, segments: int) -> Shape:
+    def segment(i: int) -> Shape:
+        segment_length = length / segments
+        segment_radius = radius * (1 - i / segments)
+        cylinder = primitive_call('cylinder', color=(0.5, 0.2, 0.5), 
+                                  shape_kwargs={'radius': segment_radius, 
+                                                'p0': (0, 0, 0), 
+                                                'p1': (0, -segment_length, 0)})
+        angle = math.sin(i * math.pi / 4) * 0.3
+        rotation = rotation_matrix(angle, (1, 0, 0), (0, 0, 0))
+        translation = translation_matrix((0, -i * segment_length, 0))
+        return transform_shape(cylinder, translation @ rotation)
+    
+    return loop(segments, segment)
+
+@register()
+def octopus_puppet(head_radius: float, tentacle_length: float, tentacle_radius: float) -> Shape:
+    head = library_call('octopus_head', radius=head_radius)
+    
+    left_eye = library_call('octopus_eye', radius=head_radius * 0.2)
+    right_eye = library_call('octopus_eye', radius=head_radius * 0.2)
+    
+    eyes = concat_shapes(
+        transform_shape(left_eye, translation_matrix((-head_radius * 0.4, head_radius * 0.4, -head_radius * 0.8))),
+        transform_shape(right_eye, translation_matrix((head_radius * 0.4, head_radius * 0.4, -head_radius * 0.8)))
+    )
+    
+    def create_tentacle(angle: float) -> Shape:
+        tentacle = library_call('octopus_tentacle', length=tentacle_length, radius=tentacle_radius, segments=8)
+        rotation = rotation_matrix(angle, (0, 1, 0), (0, 0, 0))
+        translation = translation_matrix((0, -head_radius * 0.8, 0))
+        return transform_shape(tentacle, translation @ rotation)
+    
+    tentacles = concat_shapes(*[create_tentacle(i * math.pi / 4) for i in range(8)])
+    
+    return concat_shapes(head, eyes, tentacles)
+
+@register()
+def scene() -> Shape:
+    return library_call('octopus_puppet', head_radius=0.5, tentacle_length=1.0, tentacle_radius=0.1)
+```
+
+This program creates an octopus puppet with the following components:
+
+1. `octopus_head`: A spherical head using the `primitive_call` function.
+2. `octopus_eye`: Two spheres to create an eye with a white part and a black pupil.
+3. `octopus_tentacle`: A series of cylinders that form a curved tentacle.
+4. `octopus_puppet`: The main function that combines the head, eyes, and tentacles to create the complete octopus puppet.
+5. `scene`: A wrapper function that calls `octopus_puppet` with specific parameters.
+
+The octopus has a spherical head with two eyes and eight tentacles arranged radially around the bottom of the head. The tentacles are curved to give a more realistic appearance.
+
+You can create the octopus puppet by calling the `scene` function:
+
+```python
+octopus = library_call('scene')
+```
+
+This will return a complete octopus puppet shape that you can further manipulate or render as needed.

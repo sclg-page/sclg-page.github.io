@@ -1,0 +1,122 @@
+```python
+from helper import *
+
+"""
+Reconstruct the input scene with vases and decorative objects
+"""
+
+@register()
+def vase_base(radius: float, height: float, color: tuple[float, float, float]) -> Shape:
+    return primitive_call('cylinder', shape_kwargs={'radius': radius, 'p0': (0, 0, 0), 'p1': (0, height, 0)}, color=color)
+
+@register()
+def spherical_vase(radius: float, color: tuple[float, float, float]) -> Shape:
+    return primitive_call('sphere', shape_kwargs={'radius': radius}, color=color)
+
+@register()
+def yellow_vase() -> Shape:
+    base = library_call('vase_base', radius=0.15, height=0.4, color=(1, 0.8, 0))
+    top = library_call('vase_base', radius=0.2, height=0.2, color=(1, 0.8, 0))
+    return concat_shapes(
+        base,
+        transform_shape(top, translation_matrix((0, 0.4, 0)))
+    )
+
+@register()
+def pink_tall_vase() -> Shape:
+    base = library_call('vase_base', radius=0.1, height=0.6, color=(1, 0.6, 0.8))
+    middle = library_call('vase_base', radius=0.12, height=0.1, color=(1, 0.6, 0.8))
+    top = library_call('vase_base', radius=0.08, height=0.2, color=(1, 0.6, 0.8))
+    return concat_shapes(
+        base,
+        transform_shape(middle, translation_matrix((0, 0.6, 0))),
+        transform_shape(top, translation_matrix((0, 0.7, 0)))
+    )
+
+@register()
+def purple_vase() -> Shape:
+    base = library_call('vase_base', radius=0.15, height=0.3, color=(0.6, 0.2, 0.6))
+    top = library_call('vase_base', radius=0.1, height=0.2, color=(0.6, 0.2, 0.6))
+    return concat_shapes(
+        base,
+        transform_shape(top, translation_matrix((0, 0.3, 0)))
+    )
+
+@register()
+def round_container() -> Shape:
+    bottom = library_call('spherical_vase', radius=0.15, color=(1, 0.7, 0.6))
+    top = library_call('spherical_vase', radius=0.15, color=(1, 0.7, 0.6))
+    return concat_shapes(
+        bottom,
+        transform_shape(top, translation_matrix((0, 0.15, 0)))
+    )
+
+@register()
+def small_sphere() -> Shape:
+    return primitive_call('sphere', shape_kwargs={'radius': 0.05}, color=(1, 0.9, 0.7))
+
+@register()
+def leaf(scale: float, color: tuple[float, float, float]) -> Shape:
+    leaf_shape = primitive_call('sphere', shape_kwargs={'radius': 0.5}, color=color)
+    return transform_shape(leaf_shape, scale_matrix(scale, (0, 0, 0)))
+
+@register()
+def anthurium_flower() -> Shape:
+    stem = library_call('vase_base', radius=0.01, height=0.4, color=(0.5, 0.7, 0.3))
+    flower = library_call('leaf', scale=0.3, color=(1, 0.6, 0.6))
+    return concat_shapes(
+        stem,
+        transform_shape(flower, translation_matrix((0, 0.4, 0)))
+    )
+
+@register()
+def lotus_pod() -> Shape:
+    pod = primitive_call('sphere', shape_kwargs={'radius': 0.1}, color=(0.7, 0.7, 0.5))
+    stem = library_call('vase_base', radius=0.01, height=0.3, color=(0.5, 0.7, 0.3))
+    return concat_shapes(
+        pod,
+        transform_shape(stem, translation_matrix((0, -0.3, 0)))
+    )
+
+@register()
+def branch() -> Shape:
+    main_stem = library_call('vase_base', radius=0.01, height=0.5, color=(0.5, 0.3, 0.1))
+    
+    def create_twig(angle: float, height: float) -> Shape:
+        twig = library_call('vase_base', radius=0.005, height=0.2, color=(0.5, 0.3, 0.1))
+        return transform_shape(twig, 
+                               rotation_matrix(angle, (0, 0, 1), (0, height, 0)) @ 
+                               translation_matrix((0, height, 0)))
+    
+    return concat_shapes(
+        main_stem,
+        create_twig(math.pi/4, 0.3),
+        create_twig(-math.pi/4, 0.4)
+    )
+
+@register()
+def scene() -> Shape:
+    table = primitive_call('cube', shape_kwargs={'scale': (2, 0.1, 1)}, color=(0.8, 0.6, 0.4))
+    
+    yellow_vase_shape = library_call('yellow_vase')
+    pink_tall_vase_shape = library_call('pink_tall_vase')
+    purple_vase_shape = library_call('purple_vase')
+    round_container_shape = library_call('round_container')
+    small_sphere_shape = library_call('small_sphere')
+    
+    lotus_pod_shape = library_call('lotus_pod')
+    branch_shape = library_call('branch')
+    anthurium_flower_shape = library_call('anthurium_flower')
+    
+    return concat_shapes(
+        table,
+        transform_shape(yellow_vase_shape, translation_matrix((-0.4, 0.05, 0))),
+        transform_shape(pink_tall_vase_shape, translation_matrix((0, 0.05, 0))),
+        transform_shape(purple_vase_shape, translation_matrix((0.4, 0.05, 0))),
+        transform_shape(round_container_shape, translation_matrix((-0.7, 0.05, 0))),
+        transform_shape(small_sphere_shape, translation_matrix((0.2, 0.05, 0))),
+        transform_shape(lotus_pod_shape, translation_matrix((-0.4, 0.55, 0))),
+        transform_shape(branch_shape, translation_matrix((-0.4, 0.55, 0))),
+        transform_shape(anthurium_flower_shape, translation_matrix((0.4, 0.55, 0)))
+    )
+```

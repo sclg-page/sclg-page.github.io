@@ -31,10 +31,10 @@
                     <a href="#pipeline" class="nav__link">Pipeline</a>
                 </li>
                 <li>
-                    <a href="#style-transfer" class="nav__link">Style-transfer</a>
+                    <a href="#additional" class="nav__link">Additional</a>
                 </li>
                 <li>
-                    <a href="#baselines" class="nav__link">Baselines</a>
+                    <!-- <a href="#baselines" class="nav__link">Baselines</a> -->
                 </li>
             </ul>
             <i class="nav__close nav__icon nav__close_icon" id="nav-close"></i>
@@ -477,7 +477,7 @@
             </div>
         </div>
     </section>
-    <a class="anchor" id="style-transfer"></a>
+    <a class="anchor" id="additional"></a>
     <section class="section container">
         <div class="paper__section-title">Style-transfer Editing</div>
         <div class="example-container">
@@ -660,6 +660,84 @@
                 </div>
             </div>
             <div><p class="caption">Three cokes in a close circle</p></div>
+        </div>
+    </section>
+    <a class="anchor" id="failure"></a>
+    <section class="section container">
+        <div class="paper__section-title">Failure Cases</div>
+        <div class="example-container">
+            <div class="paper__section-paragraph">
+                <p>
+                    Failure case 1: prompt sensitivity.
+                    For text-conditioned tasks, minor variations in textual scene descriptions can lead to large quality differences in the output.
+                </p>
+            </div>
+            <div class="video-row paper__section-grid" style="grid-template-columns: repeat(4, 1fr)">
+                <div>
+                    <img src='resources/failure/octopus_succ00.png'>
+                    <div><p class="caption">Octopus sculpture</p><p class="subcaption">(Sample 1, accurate)</p></div>
+                    <div>
+                        <button class="toggle-btn" onclick="toggleText(this, 'resources/failure/octopus_succ00.txt')">Show Response</button>
+                    </div>
+                </div>
+                <div>
+                    <img src='resources/failure/octopus_succ01.png'>
+                    <div><p class="caption">Octopus sculpture</p><p class="subcaption">(Sample 2, accurate)</p></div>
+                    <div>
+                        <button class="toggle-btn" onclick="toggleText(this, 'resources/failure/octopus_succ01.txt')">Show Response</button>
+                    </div>
+                </div>
+                <div>
+                    <img src='resources/failure/octopus_fail00.png'>
+                    <div><p class="caption">Octopus</p><p class="subcaption">(Inaccurate)</p></div>
+                    <div>
+                        <button class="toggle-btn" onclick="toggleText(this, 'resources/failure/octopus_fail00.txt')">Show Response</button>
+                    </div>
+                </div>
+                <div>
+                    <img src='resources/failure/octopus_fail01.png'>
+                    <div><p class="caption">Octopus puppet</p><p class="subcaption">(Inaccurate)</p></div>
+                    <div>
+                        <button class="toggle-btn" onclick="toggleText(this, 'resources/failure/octopus_fail01.txt')">Show Response</button>
+                    </div>
+                </div>
+                <div class="text-content"></div>
+            </div>
+            <div class="paper__section-paragraph">
+                <p>
+                    Failure case 2: image parsing errors.
+                    For image-conditioned tasks, input images are parsed with the backbone visual language model (Claude Sonnet 3.5).
+                    In the example below, with the same input image, parsing results have high variance across multiple inference runs.
+                </p>
+            </div>
+            <div class="video-row paper__section-grid" style="grid-template-columns: repeat(4, 1fr)">
+                <div>
+                    <img src="resources/image-cond/image-ceramic_.png" alt="input">
+                    <p class="subcaption">Input image (credits: <a href="http://www.soniapedrazzini.it/index.html">Sonia Pedrazzini</a>)</p>
+                </div>
+                <div>
+                    <img src='resources/failure/vases_succ.png'>
+                    <div><p class="subcaption">Sample 1</p></div>
+                    <div>
+                        <button class="toggle-btn" onclick="toggleText(this, 'resources/failure/vases_succ.txt')">Show Response</button>
+                    </div>
+                </div>
+                <div>
+                    <img src='resources/failure/vases_fail00.png'>
+                    <div><p class="subcaption">Sample 2, inaccurate</p></div>
+                    <div>
+                        <button class="toggle-btn" onclick="toggleText(this, 'resources/failure/vases_fail00.txt')">Show Response</button>
+                    </div>
+                </div>
+                <div>
+                    <img src='resources/failure/vases_fail01.png'>
+                    <div><p class="subcaption">Sample 3, inaccurate</p></div>
+                    <div>
+                        <button class="toggle-btn" onclick="toggleText(this, 'resources/failure/vases_fail01.txt')">Show Response</button>
+                    </div>
+                </div>
+                <div class="text-content"></div>
+            </div>
         </div>
     </section>
     <section class="section container">

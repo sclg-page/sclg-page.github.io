@@ -1,0 +1,69 @@
+Here's a program to create an octopus sculpture using the provided `helper.py`:
+
+```python
+from helper import *
+
+"""
+octopus sculpture
+"""
+
+@register()
+def octopus_head(radius: float) -> Shape:
+    return primitive_call('sphere', color=(0.5, 0.2, 0.5), shape_kwargs={'radius': radius})
+
+@register()
+def octopus_eye(radius: float) -> Shape:
+    eye_white = primitive_call('sphere', color=(1.0, 1.0, 1.0), shape_kwargs={'radius': radius})
+    eye_pupil = primitive_call('sphere', color=(0.0, 0.0, 0.0), shape_kwargs={'radius': radius * 0.5})
+    return concat_shapes(
+        eye_white,
+        transform_shape(eye_pupil, translation_matrix((0, 0, radius * 0.5)))
+    )
+
+@register()
+def octopus_tentacle(length: float, radius: float, segments: int) -> Shape:
+    def segment(i: int) -> Shape:
+        segment_length = length / segments
+        segment_radius = radius * (1 - i / segments)
+        cylinder = primitive_call('cylinder', color=(0.5, 0.2, 0.5), 
+                                  shape_kwargs={'radius': segment_radius, 
+                                                'p0': (0, 0, 0), 
+                                                'p1': (0, 0, segment_length)})
+        angle = math.sin(i * math.pi / 4) * 0.5
+        rotation = rotation_matrix(angle, (1, 0, 0), (0, 0, 0))
+        translation = translation_matrix((0, 0, i * segment_length))
+        return transform_shape(cylinder, translation @ rotation)
+    
+    return loop(segments, segment)
+
+@register()
+def octopus() -> Shape:
+    head = library_call('octopus_head', radius=1.0)
+    
+    left_eye = library_call('octopus_eye', radius=0.2)
+    left_eye = transform_shape(left_eye, translation_matrix((-0.5, 0.5, -0.8)))
+    
+    right_eye = library_call('octopus_eye', radius=0.2)
+    right_eye = transform_shape(right_eye, translation_matrix((0.5, 0.5, -0.8)))
+    
+    def create_tentacle(angle: float) -> Shape:
+        tentacle = library_call('octopus_tentacle', length=4.0, radius=0.2, segments=8)
+        rotation = rotation_matrix(angle, (0, 1, 0), (0, 0, 0))
+        translation = translation_matrix((0, -1, 0))
+        return transform_shape(tentacle, translation @ rotation)
+    
+    tentacles = [create_tentacle(i * math.pi / 4) for i in range(8)]
+    
+    return concat_shapes(head, left_eye, right_eye, *tentacles)
+
+```
+
+This program creates an octopus sculpture with the following components:
+
+1. A spherical head
+2. Two eyes, each composed of a white sphere and a black pupil
+3. Eight tentacles, each made up of cylindrical segments that taper and curve
+
+The `octopus()` function assembles all these components into a complete octopus sculpture. The head is centered at the origin, the eyes are positioned on the front of the head, and the tentacles are arranged radially around the bottom of the head.
+
+You can create the octopus sculpture by calling `library_call('octopus')`.
